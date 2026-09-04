@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shopping Cart - ShopZone</title>
+  <link rel="stylesheet" href="styles/main.css" />
+  <link rel="stylesheet" href="styles/pages.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="logo"><i class="fas fa-shopping-bag"></i> ShopZone</a>
+      <nav class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="products.html">Products</a>
+      </nav>
+      <div class="nav-actions">
+        <div class="search-bar">
+          <input type="text" id="search-input" placeholder="Search products..." />
+          <button onclick="window.location.href='products.html?search='+document.getElementById('search-input').value"><i class="fas fa-search"></i></button>
+        </div>
+        <a href="cart.html" class="cart-icon active">
+          <i class="fas fa-shopping-cart"></i>
+          <span class="cart-count" id="cart-count">0</span>
+        </a>
+      </div>
+      <button class="hamburger" id="hamburger"><i class="fas fa-bars"></i></button>
+    </div>
+    <div class="mobile-menu" id="mobile-menu">
+      <a href="index.html">Home</a>
+      <a href="products.html">Products</a>
+    </div>
+  </header>
+
+  <!-- PAGE HERO -->
+  <section class="page-hero">
+    <div class="container">
+      <h1>Shopping Cart</h1>
+      <nav class="breadcrumb">
+        <a href="index.html">Home</a> <i class="fas fa-chevron-right"></i> <span>Cart</span>
+      </nav>
+    </div>
+  </section>
+
+  <!-- CART CONTENT -->
+  <section class="cart-page">
+    <div class="container">
+
+      <!-- EMPTY CART -->
+      <div class="empty-cart hidden" id="empty-cart">
+        <i class="fas fa-shopping-cart"></i>
+        <h2>Your cart is empty</h2>
+        <p>Looks like you haven't added anything yet.</p>
+        <a href="products.html" class="btn btn-primary">Start Shopping</a>
+      </div>
+
+      <!-- CART LAYOUT -->
+      <div class="cart-layout" id="cart-layout">
+        <div class="cart-items-section">
+          <div class="cart-header-row">
+            <span>Product</span>
+            <span>Price</span>
+            <span>Quantity</span>
+            <span>Subtotal</span>
+            <span></span>
+          </div>
+          <div id="cart-items-list"></div>
+
+          <div class="cart-actions">
+            <a href="products.html" class="btn btn-outline"><i class="fas fa-arrow-left"></i> Continue Shopping</a>
+            <button class="btn btn-danger" onclick="clearCartConfirm()"><i class="fas fa-trash"></i> Clear Cart</button>
+          </div>
+
+          <!-- COUPON -->
+          <div class="coupon-section">
+            <h4><i class="fas fa-tag"></i> Apply Coupon</h4>
+            <div class="coupon-input">
+              <input type="text" id="coupon-code" placeholder="Enter coupon code (try: SAVE10)" />
+              <button class="btn btn-primary" onclick="applyCoupon()">Apply</button>
+            </div>
+            <div id="coupon-message"></div>
+          </div>
+        </div>
+
+        <!-- ORDER SUMMARY -->
+        <aside class="cart-summary">
+          <h3>Order Summary</h3>
+          <div class="summary-rows">
+            <div class="summary-row"><span>Subtotal</span><span id="summary-subtotal">$0.00</span></div>
+            <div class="summary-row discount-row hidden" id="discount-row"><span>Discount</span><span id="summary-discount" class="text-green">-$0.00</span></div>
+            <div class="summary-row"><span>Shipping</span><span id="summary-shipping">$0.00</span></div>
+            <div class="summary-row"><span>Tax (8%)</span><span id="summary-tax">$0.00</span></div>
+            <div class="summary-row total-row"><span>Total</span><span id="summary-total">$0.00</span></div>
+          </div>
+          <div class="free-shipping-bar" id="shipping-progress">
+            <p id="shipping-msg">Add <strong id="shipping-remaining">$50.00</strong> more for free shipping!</p>
+            <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+          </div>
+          <a href="checkout.html" class="btn btn-primary btn-full" id="checkout-btn">
+            <i class="fas fa-lock"></i> Proceed to Checkout
+          </a>
+          <div class="secure-badges">
+            <span><i class="fas fa-shield-alt"></i> Secure Checkout</span>
+            <span><i class="fas fa-undo"></i> Easy Returns</span>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <p>&copy; 2026 ShopZone. All rights reserved.</p>
+        <div class="payment-icons">
+          <i class="fab fa-cc-visa"></i><i class="fab fa-cc-mastercard"></i><i class="fab fa-cc-paypal"></i>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/products.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    let discountAmount = 0;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      updateCartCount();
+      renderCartPage();
+      document.getElementById('hamburger').addEventListener('click', () => {
+        document.getElementById('mobile-menu').classList.toggle('open');
+      });
+    });
+
+    function renderCartPage() {
+      const cart = getCart();
+      const emptyEl = document.getElementById('empty-cart');
+      const layoutEl = document.getElementById('cart-layout');
+
+      if (cart.length === 0) {
+        emptyEl.classList.remove('hidden');
+        layoutEl.classList.add('hidden');
+        return;
+      }
+
+      emptyEl.classList.add('hidden');
+      layoutEl.classList.remove('hidden');
+
+      const listEl = document.getElementById('cart-items-list');
+      listEl.innerHTML = cart.map(item => `
+        <div class="cart-item" data-id="${item.id}">
+          <div class="cart-item-product">
+            <img src="${item.image}" alt="${item.name}" onclick="window.location.href='product-detail.html?id=${item.id}'" />
+            <div class="cart-item-info">
+              <h4 onclick="window.location.href='product-detail.html?id=${item.id}'">${item.name}</h4>
+              <span class="cart-item-category">${item.category}</span>
+            </div>
+          </div>
+          <div class="cart-item-price">$${item.price.toFixed(2)}</div>
+          <div class="cart-item-qty">
+            <div class="qty-control">
+              <button onclick="updateItemQty(${item.id}, ${item.qty - 1})">-</button>
+              <input type="number" value="${item.qty}" min="1" max="10" onchange="updateItemQty(${item.id}, parseInt(this.value))" />
+              <button onclick="updateItemQty(${item.id}, ${item.qty + 1})">+</button>
+            </div>
+          </div>
+          <div class="cart-item-subtotal">$${(item.price * item.qty).toFixed(2)}</div>
+          <div class="cart-item-remove">
+            <button onclick="removeFromCartPage(${item.id})" title="Remove"><i class="fas fa-times"></i></button>
+          </div>
+        </div>`).join('');
+
+      updateSummary();
+    }
+
+    function updateItemQty(id, qty) {
+      if (qty < 1) { removeFromCartPage(id); return; }
+      if (qty > 10) qty = 10;
+      updateCartQty(id, qty);
+      renderCartPage();
+    }
+
+    function removeFromCartPage(id) {
+      removeFromCart(id);
+      renderCartPage();
+      updateCartCount();
+      showToast('Item removed from cart', 'info');
+    }
+
+    function clearCartConfirm() {
+      if (confirm('Are you sure you want to clear your cart?')) {
+        clearCart();
+        renderCartPage();
+        updateCartCount();
+        showToast('Cart cleared', 'info');
+      }
+    }
+
+    function updateSummary() {
+      const cart = getCart();
+      const subtotal = cart.reduce((sum, i) => sum + i.price * i.qty, 0);
+      const shipping = subtotal >= 50 ? 0 : 5.99;
+      const tax = subtotal * 0.08;
+      const total = subtotal - discountAmount + shipping + tax;
+
+      document.getElementById('summary-subtotal').textContent = '$' + subtotal.toFixed(2);
+      document.getElementById('summary-shipping').textContent = shipping === 0 ? 'FREE' : '$' + shipping.toFixed(2);
+      document.getElementById('summary-tax').textContent = '$' + tax.toFixed(2);
+      document.getElementById('summary-total').textContent = '$' + total.toFixed(2);
+
+      if (discountAmount > 0) {
+        document.getElementById('discount-row').classList.remove('hidden');
+        document.getElementById('summary-discount').textContent = '-$' + discountAmount.toFixed(2);
+      }
+
+      // Free shipping progress
+      const threshold = 50;
+      const progress = Math.min((subtotal / threshold) * 100, 100);
+      document.getElementById('progress-fill').style.width = progress + '%';
+      if (subtotal >= threshold) {
+        document.getElementById('shipping-msg').innerHTML = '<strong style="color:var(--success)">You\'ve unlocked free shipping!</strong>';
+      } else {
+        document.getElementById('shipping-remaining').textContent = '$' + (threshold - subtotal).toFixed(2);
+      }
+    }
+
+    function applyCoupon() {
+      const code = document.getElementById('coupon-code').value.trim().toUpperCase();
+      const msgEl = document.getElementById('coupon-message');
+      const cart = getCart();
+      const subtotal = cart.reduce((sum, i) => sum + i.price * i.qty, 0);
+      const coupons = { 'SAVE10': 0.10, 'DEAL20': 0.20, 'WELCOME5': 0.05 };
+
+      if (coupons[code]) {
+        discountAmount = subtotal * coupons[code];
+        msgEl.innerHTML = `<span class="text-green"><i class="fas fa-check"></i> Coupon applied! ${(coupons[code]*100)}% off</span>`;
+        updateSummary();
+      } else {
+        msgEl.innerHTML = `<span class="text-red"><i class="fas fa-times"></i> Invalid coupon code</span>`;
+      }
+    }
+  </script>
+</body>
+</html>

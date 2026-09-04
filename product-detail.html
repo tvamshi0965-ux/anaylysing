@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Product Detail - ShopZone</title>
+  <link rel="stylesheet" href="styles/main.css" />
+  <link rel="stylesheet" href="styles/pages.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="logo"><i class="fas fa-shopping-bag"></i> ShopZone</a>
+      <nav class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="products.html">Products</a>
+        <a href="index.html#categories">Categories</a>
+        <a href="index.html#contact">Contact</a>
+      </nav>
+      <div class="nav-actions">
+        <div class="search-bar">
+          <input type="text" id="search-input" placeholder="Search products..." />
+          <button onclick="window.location.href='products.html?search='+document.getElementById('search-input').value"><i class="fas fa-search"></i></button>
+        </div>
+        <a href="cart.html" class="cart-icon">
+          <i class="fas fa-shopping-cart"></i>
+          <span class="cart-count" id="cart-count">0</span>
+        </a>
+      </div>
+      <button class="hamburger" id="hamburger"><i class="fas fa-bars"></i></button>
+    </div>
+    <div class="mobile-menu" id="mobile-menu">
+      <a href="index.html">Home</a>
+      <a href="products.html">Products</a>
+    </div>
+  </header>
+
+  <!-- PRODUCT DETAIL -->
+  <section class="product-detail-page">
+    <div class="container">
+      <nav class="breadcrumb">
+        <a href="index.html">Home</a>
+        <i class="fas fa-chevron-right"></i>
+        <a href="products.html">Products</a>
+        <i class="fas fa-chevron-right"></i>
+        <span id="breadcrumb-name">Product</span>
+      </nav>
+
+      <div class="product-detail-layout" id="product-detail-content">
+        <!-- Rendered by JS -->
+      </div>
+
+      <!-- TABS -->
+      <div class="product-tabs">
+        <div class="tab-buttons">
+          <button class="tab-btn active" onclick="showTab('description', this)">Description</button>
+          <button class="tab-btn" onclick="showTab('specs', this)">Specifications</button>
+          <button class="tab-btn" onclick="showTab('reviews', this)">Reviews</button>
+        </div>
+        <div class="tab-content" id="tab-description">
+          <div id="desc-content"></div>
+        </div>
+        <div class="tab-content hidden" id="tab-specs">
+          <table class="specs-table" id="specs-content"></table>
+        </div>
+        <div class="tab-content hidden" id="tab-reviews">
+          <div class="reviews-list" id="reviews-content"></div>
+        </div>
+      </div>
+
+      <!-- RELATED PRODUCTS -->
+      <div class="related-products">
+        <h2>You May Also Like</h2>
+        <div class="product-grid" id="related-grid"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <p>&copy; 2026 ShopZone. All rights reserved.</p>
+        <div class="payment-icons">
+          <i class="fab fa-cc-visa"></i><i class="fab fa-cc-mastercard"></i><i class="fab fa-cc-paypal"></i>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/products.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      updateCartCount();
+      const params = new URLSearchParams(window.location.search);
+      const id = parseInt(params.get('id'));
+      const product = products.find(p => p.id === id);
+
+      if (!product) {
+        document.getElementById('product-detail-content').innerHTML = `
+          <div class="not-found-msg">
+            <i class="fas fa-box-open"></i>
+            <h2>Product not found</h2>
+            <a href="products.html" class="btn btn-primary">Back to Products</a>
+          </div>`;
+        return;
+      }
+
+      document.title = product.name + ' - ShopZone';
+      document.getElementById('breadcrumb-name').textContent = product.name;
+
+      renderProductDetail(product);
+      renderRelated(product);
+
+      document.getElementById('hamburger').addEventListener('click', () => {
+        document.getElementById('mobile-menu').classList.toggle('open');
+      });
+    });
+
+    function showTab(name, btn) {
+      document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById('tab-' + name).classList.remove('hidden');
+      btn.classList.add('active');
+    }
+
+    function renderProductDetail(p) {
+      const stars = renderStars(p.rating);
+      const discount = p.originalPrice ? Math.round((1 - p.price / p.originalPrice) * 100) : 0;
+
+      document.getElementById('product-detail-content').innerHTML = `
+        <div class="pd-images">
+          <div class="pd-main-img">
+            <img src="${p.image}" alt="${p.name}" id="main-product-img" />
+            ${discount ? `<span class="badge-sale">-${discount}%</span>` : ''}
+          </div>
+          <div class="pd-thumbnails">
+            <img src="${p.image}" alt="${p.name}" class="thumb active" onclick="changeImage('${p.image}', this)" />
+          </div>
+        </div>
+        <div class="pd-info">
+          <span class="pd-category">${p.category}</span>
+          <h1 class="pd-title">${p.name}</h1>
+          <div class="pd-rating">
+            ${stars}
+            <span class="rating-value">${p.rating}</span>
+            <span class="rating-count">(${p.reviews} reviews)</span>
+          </div>
+          <div class="pd-price">
+            <span class="pd-current-price">$${p.price.toFixed(2)}</span>
+            ${p.originalPrice ? `<span class="pd-original-price">$${p.originalPrice.toFixed(2)}</span>` : ''}
+            ${discount ? `<span class="pd-discount">Save ${discount}%</span>` : ''}
+          </div>
+          <p class="pd-description">${p.description}</p>
+          <div class="pd-stock ${p.inStock ? 'in-stock' : 'out-of-stock'}">
+            <i class="fas ${p.inStock ? 'fa-check-circle' : 'fa-times-circle'}"></i>
+            ${p.inStock ? 'In Stock' : 'Out of Stock'}
+          </div>
+          <div class="pd-quantity">
+            <label>Quantity:</label>
+            <div class="qty-control">
+              <button onclick="changeQty(-1)">-</button>
+              <input type="number" id="qty-input" value="1" min="1" max="10" />
+              <button onclick="changeQty(1)">+</button>
+            </div>
+          </div>
+          <div class="pd-actions">
+            <button class="btn btn-primary btn-lg" onclick="addToCartDetail(${p.id})" ${!p.inStock ? 'disabled' : ''}>
+              <i class="fas fa-shopping-cart"></i> Add to Cart
+            </button>
+            <button class="btn btn-outline btn-lg" onclick="buyNow(${p.id})">
+              <i class="fas fa-bolt"></i> Buy Now
+            </button>
+            <button class="btn-wishlist" onclick="toggleWishlist(this)">
+              <i class="far fa-heart"></i>
+            </button>
+          </div>
+          <div class="pd-features">
+            <div class="feature"><i class="fas fa-truck"></i><span>Free Shipping over $50</span></div>
+            <div class="feature"><i class="fas fa-undo"></i><span>30-Day Returns</span></div>
+            <div class="feature"><i class="fas fa-shield-alt"></i><span>2-Year Warranty</span></div>
+          </div>
+        </div>`;
+
+      // Populate tabs
+      document.getElementById('desc-content').innerHTML = `<p>${p.description}</p><p>Experience the best quality with ${p.name}. Designed for performance and style, this product brings together innovation and reliability.</p>`;
+
+      document.getElementById('specs-content').innerHTML = `
+        <tr><th>Category</th><td>${p.category}</td></tr>
+        <tr><th>Price</th><td>$${p.price.toFixed(2)}</td></tr>
+        <tr><th>Rating</th><td>${p.rating} / 5</td></tr>
+        <tr><th>Reviews</th><td>${p.reviews}</td></tr>
+        <tr><th>Availability</th><td>${p.inStock ? 'In Stock' : 'Out of Stock'}</td></tr>`;
+
+      document.getElementById('reviews-content').innerHTML = `
+        <div class="review-item"><div class="reviewer"><img src="https://i.pravatar.cc/40?img=10" /><div><strong>Alex T.</strong><span>Verified Buyer</span></div></div><div class="stars">${stars}</div><p>Really happy with this purchase. Great value for money!</p></div>
+        <div class="review-item"><div class="reviewer"><img src="https://i.pravatar.cc/40?img=11" /><div><strong>Maria G.</strong><span>Verified Buyer</span></div></div><div class="stars">${stars}</div><p>Fast delivery and the product exceeded my expectations.</p></div>`;
+    }
+
+    function renderRelated(current) {
+      const related = products.filter(p => p.category === current.category && p.id !== current.id).slice(0, 4);
+      const grid = document.getElementById('related-grid');
+      grid.innerHTML = related.map(p => createProductCard(p)).join('');
+    }
+
+    function changeImage(src, el) {
+      document.getElementById('main-product-img').src = src;
+      document.querySelectorAll('.thumb').forEach(t => t.classList.remove('active'));
+      el.classList.add('active');
+    }
+
+    function changeQty(delta) {
+      const input = document.getElementById('qty-input');
+      const val = Math.max(1, Math.min(10, parseInt(input.value) + delta));
+      input.value = val;
+    }
+
+    function addToCartDetail(id) {
+      const qty = parseInt(document.getElementById('qty-input').value);
+      const product = products.find(p => p.id === id);
+      for (let i = 0; i < qty; i++) addToCart(product);
+      showToast(`${product.name} added to cart!`, 'success');
+      updateCartCount();
+    }
+
+    function buyNow(id) {
+      addToCartDetail(id);
+      window.location.href = 'cart.html';
+    }
+
+    function toggleWishlist(btn) {
+      const icon = btn.querySelector('i');
+      icon.classList.toggle('far');
+      icon.classList.toggle('fas');
+      icon.classList.toggle('text-red');
+      showToast(icon.classList.contains('fas') ? 'Added to wishlist!' : 'Removed from wishlist', 'info');
+    }
+  </script>
+</body>
+</html>

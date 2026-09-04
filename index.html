@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ShopZone - Your One Stop Shop</title>
+  <link rel="stylesheet" href="styles/main.css" />
+  <link rel="stylesheet" href="styles/pages.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="logo">
+        <i class="fas fa-shopping-bag"></i> ShopZone
+      </a>
+      <nav class="nav-links">
+        <a href="index.html" class="active">Home</a>
+        <a href="products.html">Products</a>
+        <a href="#categories">Categories</a>
+        <a href="#contact">Contact</a>
+      </nav>
+      <div class="nav-actions">
+        <div class="search-bar">
+          <input type="text" id="search-input" placeholder="Search products..." />
+          <button onclick="handleSearch()"><i class="fas fa-search"></i></button>
+        </div>
+        <a href="cart.html" class="cart-icon">
+          <i class="fas fa-shopping-cart"></i>
+          <span class="cart-count" id="cart-count">0</span>
+        </a>
+      </div>
+      <button class="hamburger" id="hamburger"><i class="fas fa-bars"></i></button>
+    </div>
+    <div class="mobile-menu" id="mobile-menu">
+      <a href="index.html">Home</a>
+      <a href="products.html">Products</a>
+      <a href="#categories">Categories</a>
+      <a href="#contact">Contact</a>
+    </div>
+  </header>
+
+  <!-- HERO SECTION -->
+  <section class="hero">
+    <div class="hero-content">
+      <span class="hero-badge">New Arrivals 2026</span>
+      <h1>Discover Your <span>Perfect Style</span></h1>
+      <p>Shop the latest trends across Electronics, Fashion, Home & More. Free shipping on orders over $50.</p>
+      <div class="hero-buttons">
+        <a href="products.html" class="btn btn-primary">Shop Now <i class="fas fa-arrow-right"></i></a>
+        <a href="#featured" class="btn btn-outline">View Deals</a>
+      </div>
+      <div class="hero-stats">
+        <div class="stat"><strong>50K+</strong><span>Products</span></div>
+        <div class="stat"><strong>10K+</strong><span>Happy Customers</span></div>
+        <div class="stat"><strong>99%</strong><span>Satisfaction</span></div>
+      </div>
+    </div>
+    <div class="hero-image">
+      <div class="hero-img-wrapper">
+        <div class="floating-card card1"><i class="fas fa-tag"></i> Up to 50% Off</div>
+        <div class="floating-card card2"><i class="fas fa-truck"></i> Free Delivery</div>
+        <img src="https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=600&q=80" alt="Shopping" />
+      </div>
+    </div>
+  </section>
+
+  <!-- CATEGORIES -->
+  <section class="categories" id="categories">
+    <div class="container">
+      <div class="section-header">
+        <h2>Shop by Category</h2>
+        <p>Find exactly what you're looking for</p>
+      </div>
+      <div class="category-grid">
+        <a href="products.html?category=electronics" class="category-card">
+          <div class="cat-icon" style="background:#e8f4fd;"><i class="fas fa-laptop" style="color:#2196F3;"></i></div>
+          <h3>Electronics</h3>
+          <span>120+ Items</span>
+        </a>
+        <a href="products.html?category=fashion" class="category-card">
+          <div class="cat-icon" style="background:#fce4ec;"><i class="fas fa-tshirt" style="color:#e91e63;"></i></div>
+          <h3>Fashion</h3>
+          <span>340+ Items</span>
+        </a>
+        <a href="products.html?category=home" class="category-card">
+          <div class="cat-icon" style="background:#e8f5e9;"><i class="fas fa-home" style="color:#4CAF50;"></i></div>
+          <h3>Home & Living</h3>
+          <span>210+ Items</span>
+        </a>
+        <a href="products.html?category=sports" class="category-card">
+          <div class="cat-icon" style="background:#fff3e0;"><i class="fas fa-dumbbell" style="color:#FF9800;"></i></div>
+          <h3>Sports</h3>
+          <span>95+ Items</span>
+        </a>
+        <a href="products.html?category=beauty" class="category-card">
+          <div class="cat-icon" style="background:#f3e5f5;"><i class="fas fa-spa" style="color:#9C27B0;"></i></div>
+          <h3>Beauty</h3>
+          <span>180+ Items</span>
+        </a>
+        <a href="products.html?category=books" class="category-card">
+          <div class="cat-icon" style="background:#e0f2f1;"><i class="fas fa-book" style="color:#009688;"></i></div>
+          <h3>Books</h3>
+          <span>500+ Items</span>
+        </a>
+        <a href="products.html?category=appliances" class="category-card">
+          <div class="cat-icon" style="background:#e3f2fd;"><i class="fas fa-temperature-low" style="color:#1565C0;"></i></div>
+          <h3>Mini Coolers</h3>
+          <span>20+ Items</span>
+        </a>
+        <a href="products.html?category=bags" class="category-card">
+          <div class="cat-icon" style="background:#fce4ec;"><i class="fas fa-shopping-bag" style="color:#c2185b;"></i></div>
+          <h3>Bags</h3>
+          <span>80+ Items</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURED PRODUCTS -->
+  <section class="featured-products" id="featured">
+    <div class="container">
+      <div class="section-header">
+        <h2>Featured Products</h2>
+        <a href="products.html" class="view-all">View All <i class="fas fa-arrow-right"></i></a>
+      </div>
+      <div class="product-grid" id="featured-grid">
+        <!-- Rendered by JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- PROMO BANNER -->
+  <section class="promo-banner">
+    <div class="container">
+      <div class="promo-content">
+        <div class="promo-text">
+          <h2>Special Summer Sale</h2>
+          <p>Get up to <strong>50% off</strong> on selected items. Limited time offer!</p>
+          <a href="products.html" class="btn btn-white">Shop the Sale</a>
+        </div>
+        <div class="promo-timer" id="promo-timer">
+          <div class="time-box"><span id="days">00</span><label>Days</label></div>
+          <div class="time-box"><span id="hours">00</span><label>Hours</label></div>
+          <div class="time-box"><span id="minutes">00</span><label>Mins</label></div>
+          <div class="time-box"><span id="seconds">00</span><label>Secs</label></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section class="testimonials">
+    <div class="container">
+      <div class="section-header">
+        <h2>What Our Customers Say</h2>
+        <p>Trusted by thousands of happy shoppers</p>
+      </div>
+      <div class="testimonial-grid">
+        <div class="testimonial-card">
+          <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+          <p>"Amazing quality and super fast delivery. Will definitely shop again!"</p>
+          <div class="reviewer"><img src="https://i.pravatar.cc/50?img=1" alt="Sarah"/><div><strong>Sarah M.</strong><span>Verified Buyer</span></div></div>
+        </div>
+        <div class="testimonial-card">
+          <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+          <p>"Best online shopping experience I've ever had. Great prices too!"</p>
+          <div class="reviewer"><img src="https://i.pravatar.cc/50?img=3" alt="James"/><div><strong>James K.</strong><span>Verified Buyer</span></div></div>
+        </div>
+        <div class="testimonial-card">
+          <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i></div>
+          <p>"Huge variety of products. Customer support was very responsive!"</p>
+          <div class="reviewer"><img src="https://i.pravatar.cc/50?img=5" alt="Priya"/><div><strong>Priya S.</strong><span>Verified Buyer</span></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- NEWSLETTER -->
+  <section class="newsletter">
+    <div class="container">
+      <div class="newsletter-content">
+        <i class="fas fa-envelope-open-text"></i>
+        <h2>Subscribe to Our Newsletter</h2>
+        <p>Get exclusive deals, new arrivals and more delivered to your inbox.</p>
+        <form class="newsletter-form" onsubmit="subscribeNewsletter(event)">
+          <input type="email" placeholder="Enter your email address" required />
+          <button type="submit" class="btn btn-primary">Subscribe</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer" id="contact">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="index.html" class="logo"><i class="fas fa-shopping-bag"></i> ShopZone</a>
+          <p>Your one-stop destination for all your shopping needs. Quality products, great prices.</p>
+          <div class="social-links">
+            <a href="#"><i class="fab fa-facebook-f"></i></a>
+            <a href="#"><i class="fab fa-twitter"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-youtube"></i></a>
+          </div>
+        </div>
+        <div class="footer-links">
+          <h4>Quick Links</h4>
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="products.html">Products</a></li>
+            <li><a href="cart.html">Cart</a></li>
+            <li><a href="checkout.html">Checkout</a></li>
+          </ul>
+        </div>
+        <div class="footer-links">
+          <h4>Customer Service</h4>
+          <ul>
+            <li><a href="#">FAQ</a></li>
+            <li><a href="#">Returns Policy</a></li>
+            <li><a href="#">Shipping Info</a></li>
+            <li><a href="#">Track Order</a></li>
+          </ul>
+        </div>
+        <div class="footer-contact">
+          <h4>Contact Us</h4>
+          <p><i class="fas fa-map-marker-alt"></i> 123 Shop Street, NY 10001</p>
+          <p><i class="fas fa-phone"></i> +1 (555) 123-4567</p>
+          <p><i class="fas fa-envelope"></i> support@shopzone.com</p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 ShopZone. All rights reserved.</p>
+        <div class="payment-icons">
+          <i class="fab fa-cc-visa"></i>
+          <i class="fab fa-cc-mastercard"></i>
+          <i class="fab fa-cc-paypal"></i>
+          <i class="fab fa-cc-apple-pay"></i>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/products.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    // Render featured products on homepage
+    document.addEventListener('DOMContentLoaded', () => {
+      updateCartCount();
+      renderFeaturedProducts();
+      startCountdown();
+    });
+
+    function handleSearch() {
+      const q = document.getElementById('search-input').value.trim();
+      if (q) window.location.href = `products.html?search=${encodeURIComponent(q)}`;
+    }
+    document.getElementById('search-input').addEventListener('keypress', e => {
+      if (e.key === 'Enter') handleSearch();
+    });
+
+    function subscribeNewsletter(e) {
+      e.preventDefault();
+      showToast('Thank you for subscribing!', 'success');
+      e.target.reset();
+    }
+
+    function startCountdown() {
+      const end = new Date();
+      end.setDate(end.getDate() + 3);
+      setInterval(() => {
+        const now = new Date();
+        const diff = end - now;
+        if (diff <= 0) return;
+        document.getElementById('days').textContent    = String(Math.floor(diff / 86400000)).padStart(2,'0');
+        document.getElementById('hours').textContent   = String(Math.floor((diff % 86400000) / 3600000)).padStart(2,'0');
+        document.getElementById('minutes').textContent = String(Math.floor((diff % 3600000) / 60000)).padStart(2,'0');
+        document.getElementById('seconds').textContent = String(Math.floor((diff % 60000) / 1000)).padStart(2,'0');
+      }, 1000);
+    }
+
+    // Hamburger menu
+    document.getElementById('hamburger').addEventListener('click', () => {
+      document.getElementById('mobile-menu').classList.toggle('open');
+    });
+  </script>
+</body>
+</html>

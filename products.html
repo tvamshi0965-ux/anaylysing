@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Products - ShopZone</title>
+  <link rel="stylesheet" href="styles/main.css" />
+  <link rel="stylesheet" href="styles/pages.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="logo"><i class="fas fa-shopping-bag"></i> ShopZone</a>
+      <nav class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="products.html" class="active">Products</a>
+        <a href="index.html#categories">Categories</a>
+        <a href="index.html#contact">Contact</a>
+      </nav>
+      <div class="nav-actions">
+        <div class="search-bar">
+          <input type="text" id="search-input" placeholder="Search products..." />
+          <button onclick="applyFilters()"><i class="fas fa-search"></i></button>
+        </div>
+        <a href="cart.html" class="cart-icon">
+          <i class="fas fa-shopping-cart"></i>
+          <span class="cart-count" id="cart-count">0</span>
+        </a>
+      </div>
+      <button class="hamburger" id="hamburger"><i class="fas fa-bars"></i></button>
+    </div>
+    <div class="mobile-menu" id="mobile-menu">
+      <a href="index.html">Home</a>
+      <a href="products.html">Products</a>
+      <a href="index.html#categories">Categories</a>
+      <a href="index.html#contact">Contact</a>
+    </div>
+  </header>
+
+  <!-- PAGE HERO -->
+  <section class="page-hero">
+    <div class="container">
+      <h1>All Products</h1>
+      <nav class="breadcrumb">
+        <a href="index.html">Home</a> <i class="fas fa-chevron-right"></i> <span>Products</span>
+      </nav>
+    </div>
+  </section>
+
+  <!-- PRODUCTS LAYOUT -->
+  <section class="products-page">
+    <div class="container">
+      <div class="products-layout">
+
+        <!-- SIDEBAR FILTERS -->
+        <aside class="filters-sidebar">
+          <div class="filter-header">
+            <h3><i class="fas fa-sliders-h"></i> Filters</h3>
+            <button class="clear-filters" onclick="clearFilters()">Clear All</button>
+          </div>
+
+          <div class="filter-group">
+            <h4>Category</h4>
+            <label><input type="checkbox" value="electronics" class="cat-filter" onchange="applyFilters()"> Electronics</label>
+            <label><input type="checkbox" value="fashion" class="cat-filter" onchange="applyFilters()"> Fashion</label>
+            <label><input type="checkbox" value="home" class="cat-filter" onchange="applyFilters()"> Home & Living</label>
+            <label><input type="checkbox" value="sports" class="cat-filter" onchange="applyFilters()"> Sports</label>
+            <label><input type="checkbox" value="beauty" class="cat-filter" onchange="applyFilters()"> Beauty</label>
+            <label><input type="checkbox" value="books" class="cat-filter" onchange="applyFilters()"> Books</label>
+            <label><input type="checkbox" value="appliances" class="cat-filter" onchange="applyFilters()"> Mini Coolers</label>
+            <label><input type="checkbox" value="bags" class="cat-filter" onchange="applyFilters()"> Bags</label>
+          </div>
+
+          <div class="filter-group">
+            <h4>Price Range</h4>
+            <div class="price-range">
+              <input type="range" id="price-range" min="0" max="1000" value="1000" oninput="updatePriceLabel(this.value); applyFilters()" />
+              <div class="price-labels">
+                <span>$0</span>
+                <span id="price-label">$1000</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="filter-group">
+            <h4>Rating</h4>
+            <label><input type="radio" name="rating" value="0" onchange="applyFilters()" checked> All Ratings</label>
+            <label><input type="radio" name="rating" value="4" onchange="applyFilters()"> <span class="mini-stars">&#9733;&#9733;&#9733;&#9733;</span> 4+ Stars</label>
+            <label><input type="radio" name="rating" value="3" onchange="applyFilters()"> <span class="mini-stars">&#9733;&#9733;&#9733;</span> 3+ Stars</label>
+          </div>
+
+          <div class="filter-group">
+            <h4>Availability</h4>
+            <label><input type="checkbox" id="in-stock-filter" onchange="applyFilters()"> In Stock Only</label>
+          </div>
+        </aside>
+
+        <!-- PRODUCT MAIN -->
+        <main class="products-main">
+          <div class="products-toolbar">
+            <p class="results-count" id="results-count">Showing all products</p>
+            <div class="toolbar-right">
+              <select id="sort-select" onchange="applyFilters()">
+                <option value="default">Sort: Default</option>
+                <option value="price-asc">Price: Low to High</option>
+                <option value="price-desc">Price: High to Low</option>
+                <option value="rating">Highest Rated</option>
+                <option value="name">Name A-Z</option>
+              </select>
+              <div class="view-toggle">
+                <button id="grid-view-btn" class="active" onclick="setView('grid')"><i class="fas fa-th"></i></button>
+                <button id="list-view-btn" onclick="setView('list')"><i class="fas fa-list"></i></button>
+              </div>
+            </div>
+          </div>
+          <div class="product-grid" id="products-grid">
+            <!-- Rendered by JS -->
+          </div>
+          <div class="no-results hidden" id="no-results">
+            <i class="fas fa-search"></i>
+            <h3>No products found</h3>
+            <p>Try adjusting your filters or search term.</p>
+            <button class="btn btn-primary" onclick="clearFilters()">Clear Filters</button>
+          </div>
+        </main>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="index.html" class="logo"><i class="fas fa-shopping-bag"></i> ShopZone</a>
+          <p>Your one-stop destination for all your shopping needs.</p>
+          <div class="social-links">
+            <a href="#"><i class="fab fa-facebook-f"></i></a>
+            <a href="#"><i class="fab fa-twitter"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+          </div>
+        </div>
+        <div class="footer-links">
+          <h4>Quick Links</h4>
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="products.html">Products</a></li>
+            <li><a href="cart.html">Cart</a></li>
+          </ul>
+        </div>
+        <div class="footer-links">
+          <h4>Help</h4>
+          <ul>
+            <li><a href="#">FAQ</a></li>
+            <li><a href="#">Returns</a></li>
+            <li><a href="#">Shipping</a></li>
+          </ul>
+        </div>
+        <div class="footer-contact">
+          <h4>Contact</h4>
+          <p><i class="fas fa-envelope"></i> support@shopzone.com</p>
+          <p><i class="fas fa-phone"></i> +1 (555) 123-4567</p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 ShopZone. All rights reserved.</p>
+        <div class="payment-icons">
+          <i class="fab fa-cc-visa"></i><i class="fab fa-cc-mastercard"></i><i class="fab fa-cc-paypal"></i>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/products.js"></script>
+  <script src="js/cart.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      updateCartCount();
+      const params = new URLSearchParams(window.location.search);
+      const cat = params.get('category');
+      const search = params.get('search');
+
+      if (cat) {
+        document.querySelectorAll('.cat-filter').forEach(cb => {
+          if (cb.value === cat) cb.checked = true;
+        });
+      }
+      if (search) {
+        document.getElementById('search-input').value = search;
+      }
+      applyFilters();
+      document.getElementById('hamburger').addEventListener('click', () => {
+        document.getElementById('mobile-menu').classList.toggle('open');
+      });
+    });
+
+    function updatePriceLabel(val) {
+      document.getElementById('price-label').textContent = '$' + val;
+    }
+
+    function setView(type) {
+      const grid = document.getElementById('products-grid');
+      if (type === 'list') {
+        grid.classList.add('list-view');
+        document.getElementById('list-view-btn').classList.add('active');
+        document.getElementById('grid-view-btn').classList.remove('active');
+      } else {
+        grid.classList.remove('list-view');
+        document.getElementById('grid-view-btn').classList.add('active');
+        document.getElementById('list-view-btn').classList.remove('active');
+      }
+    }
+  </script>
+</body>
+</html>
