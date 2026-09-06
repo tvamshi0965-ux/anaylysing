@@ -3,289 +3,263 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ShopZone - Your One Stop Shop</title>
-  <link rel="stylesheet" href="main.css" />
-  <link rel="stylesheet" href="pages.css" />
+  <title>EDU TECH – Learn. Code. Grow.</title>
+  <link rel="stylesheet" href="css/styles.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
 </head>
-<body>
+<body class="landing-page">
 
-  <!-- NAVBAR -->
-  <header class="navbar">
+  <!-- ───── NAVBAR ───── -->
+  <nav class="navbar" id="navbar">
     <div class="nav-container">
-      <a href="index.html" class="logo">
-        <i class="fas fa-shopping-bag"></i> ShopZone
-      </a>
-      <nav class="nav-links">
-        <a href="index.html" class="active">Home</a>
-        <a href="products.html">Products</a>
-        <a href="#categories">Categories</a>
-        <a href="#contact">Contact</a>
-      </nav>
+      <div class="nav-logo">
+        <div class="logo-icon"><i class="fas fa-graduation-cap"></i></div>
+        <span class="logo-text">EDU<span class="accent">TECH</span></span>
+      </div>
+      <ul class="nav-links">
+        <li><a href="#home">Home</a></li>
+        <li><a href="#features">Features</a></li>
+        <li><a href="#platforms">Platforms</a></li>
+        <li><a href="#about">About</a></li>
+      </ul>
       <div class="nav-actions">
-        <div class="search-bar">
-          <input type="text" id="search-input" placeholder="Search products..." />
-          <button onclick="handleSearch()"><i class="fas fa-search"></i></button>
-        </div>
-        <a href="cart.html" class="cart-icon">
-          <i class="fas fa-shopping-cart"></i>
-          <span class="cart-count" id="cart-count">0</span>
+        <a href="dashboard.html" class="btn btn-primary">
+          <i class="fas fa-th-large"></i> Dashboard
         </a>
       </div>
-      <button class="hamburger" id="hamburger"><i class="fas fa-bars"></i></button>
+      <button class="hamburger" id="hamburger">
+        <span></span><span></span><span></span>
+      </button>
     </div>
-    <div class="mobile-menu" id="mobile-menu">
-      <a href="index.html">Home</a>
-      <a href="products.html">Products</a>
-      <a href="#categories">Categories</a>
-      <a href="#contact">Contact</a>
-    </div>
-  </header>
+  </nav>
 
-  <!-- HERO SECTION -->
-  <section class="hero">
+  <!-- ───── HERO ───── -->
+  <section class="hero" id="home">
+    <div class="hero-bg">
+      <div class="hero-orb orb1"></div>
+      <div class="hero-orb orb2"></div>
+      <div class="hero-orb orb3"></div>
+      <div class="grid-overlay"></div>
+    </div>
     <div class="hero-content">
-      <span class="hero-badge">New Arrivals 2026</span>
-      <h1>Discover Your <span>Perfect Style</span></h1>
-      <p>Shop the latest trends across Electronics, Fashion, Home & More. Free shipping on orders over $50.</p>
-      <div class="hero-buttons">
-        <a href="products.html" class="btn btn-primary">Shop Now <i class="fas fa-arrow-right"></i></a>
-        <a href="#featured" class="btn btn-outline">View Deals</a>
+      <div class="hero-badge">
+        <i class="fas fa-bolt"></i> All-in-One Learning Platform
+      </div>
+      <h1 class="hero-title">
+        Master Coding with<br />
+        <span class="gradient-text">EDU TECH</span>
+      </h1>
+      <p class="hero-subtitle">
+        Track your LeetCode progress, GitHub contributions, GeeksForGeeks scores
+        and daily learning streaks — all from one powerful dashboard.
+      </p>
+      <div class="hero-actions">
+        <a href="dashboard.html" class="btn btn-primary btn-large">
+          <i class="fas fa-rocket"></i> Launch Dashboard
+        </a>
+        <a href="#features" class="btn btn-outline btn-large">
+          <i class="fas fa-play-circle"></i> See Features
+        </a>
       </div>
       <div class="hero-stats">
-        <div class="stat"><strong>50K+</strong><span>Products</span></div>
-        <div class="stat"><strong>10K+</strong><span>Happy Customers</span></div>
-        <div class="stat"><strong>99%</strong><span>Satisfaction</span></div>
+        <div class="stat-pill"><span class="stat-num">50K+</span> Students</div>
+        <div class="stat-pill"><span class="stat-num">3</span> Platforms</div>
+        <div class="stat-pill"><span class="stat-num">100%</span> Free</div>
       </div>
     </div>
-    <div class="hero-image">
-      <div class="hero-img-wrapper">
-        <div class="floating-card card1"><i class="fas fa-tag"></i> Up to 50% Off</div>
-        <div class="floating-card card2"><i class="fas fa-truck"></i> Free Delivery</div>
-        <img src="https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=600&q=80" alt="Shopping" />
-      </div>
-    </div>
-  </section>
-
-  <!-- CATEGORIES -->
-  <section class="categories" id="categories">
-    <div class="container">
-      <div class="section-header">
-        <h2>Shop by Category</h2>
-        <p>Find exactly what you're looking for</p>
-      </div>
-      <div class="category-grid">
-        <a href="products.html?category=electronics" class="category-card">
-          <div class="cat-icon" style="background:#e8f4fd;"><i class="fas fa-laptop" style="color:#2196F3;"></i></div>
-          <h3>Electronics</h3>
-          <span>120+ Items</span>
-        </a>
-        <a href="products.html?category=fashion" class="category-card">
-          <div class="cat-icon" style="background:#fce4ec;"><i class="fas fa-tshirt" style="color:#e91e63;"></i></div>
-          <h3>Fashion</h3>
-          <span>340+ Items</span>
-        </a>
-        <a href="products.html?category=home" class="category-card">
-          <div class="cat-icon" style="background:#e8f5e9;"><i class="fas fa-home" style="color:#4CAF50;"></i></div>
-          <h3>Home & Living</h3>
-          <span>210+ Items</span>
-        </a>
-        <a href="products.html?category=sports" class="category-card">
-          <div class="cat-icon" style="background:#fff3e0;"><i class="fas fa-dumbbell" style="color:#FF9800;"></i></div>
-          <h3>Sports</h3>
-          <span>95+ Items</span>
-        </a>
-        <a href="products.html?category=beauty" class="category-card">
-          <div class="cat-icon" style="background:#f3e5f5;"><i class="fas fa-spa" style="color:#9C27B0;"></i></div>
-          <h3>Beauty</h3>
-          <span>180+ Items</span>
-        </a>
-        <a href="products.html?category=books" class="category-card">
-          <div class="cat-icon" style="background:#e0f2f1;"><i class="fas fa-book" style="color:#009688;"></i></div>
-          <h3>Books</h3>
-          <span>500+ Items</span>
-        </a>
-        <a href="products.html?category=appliances" class="category-card">
-          <div class="cat-icon" style="background:#e3f2fd;"><i class="fas fa-temperature-low" style="color:#1565C0;"></i></div>
-          <h3>Mini Coolers</h3>
-          <span>20+ Items</span>
-        </a>
-        <a href="products.html?category=bags" class="category-card">
-          <div class="cat-icon" style="background:#fce4ec;"><i class="fas fa-shopping-bag" style="color:#c2185b;"></i></div>
-          <h3>Bags</h3>
-          <span>80+ Items</span>
-        </a>
-      </div>
-    </div>
-  </section>
-
-  <!-- FEATURED PRODUCTS -->
-  <section class="featured-products" id="featured">
-    <div class="container">
-      <div class="section-header">
-        <h2>Featured Products</h2>
-        <a href="products.html" class="view-all">View All <i class="fas fa-arrow-right"></i></a>
-      </div>
-      <div class="product-grid" id="featured-grid">
-        <!-- Rendered by JS -->
-      </div>
-    </div>
-  </section>
-
-  <!-- PROMO BANNER -->
-  <section class="promo-banner">
-    <div class="container">
-      <div class="promo-content">
-        <div class="promo-text">
-          <h2>Special Summer Sale</h2>
-          <p>Get up to <strong>50% off</strong> on selected items. Limited time offer!</p>
-          <a href="products.html" class="btn btn-white">Shop the Sale</a>
-        </div>
-        <div class="promo-timer" id="promo-timer">
-          <div class="time-box"><span id="days">00</span><label>Days</label></div>
-          <div class="time-box"><span id="hours">00</span><label>Hours</label></div>
-          <div class="time-box"><span id="minutes">00</span><label>Mins</label></div>
-          <div class="time-box"><span id="seconds">00</span><label>Secs</label></div>
+    <div class="hero-visual">
+      <div class="floating-card card-lc">
+        <img src="https://leetcode.com/favicon.ico" onerror="this.style.display='none'" alt="" />
+        <div>
+          <div class="fc-title">LeetCode</div>
+          <div class="fc-val">342 Solved</div>
         </div>
       </div>
-    </div>
-  </section>
-
-  <!-- TESTIMONIALS -->
-  <section class="testimonials">
-    <div class="container">
-      <div class="section-header">
-        <h2>What Our Customers Say</h2>
-        <p>Trusted by thousands of happy shoppers</p>
-      </div>
-      <div class="testimonial-grid">
-        <div class="testimonial-card">
-          <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
-          <p>"Amazing quality and super fast delivery. Will definitely shop again!"</p>
-          <div class="reviewer"><img src="https://i.pravatar.cc/50?img=1" alt="Sarah"/><div><strong>Sarah M.</strong><span>Verified Buyer</span></div></div>
-        </div>
-        <div class="testimonial-card">
-          <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
-          <p>"Best online shopping experience I've ever had. Great prices too!"</p>
-          <div class="reviewer"><img src="https://i.pravatar.cc/50?img=3" alt="James"/><div><strong>James K.</strong><span>Verified Buyer</span></div></div>
-        </div>
-        <div class="testimonial-card">
-          <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i></div>
-          <p>"Huge variety of products. Customer support was very responsive!"</p>
-          <div class="reviewer"><img src="https://i.pravatar.cc/50?img=5" alt="Priya"/><div><strong>Priya S.</strong><span>Verified Buyer</span></div></div>
+      <div class="floating-card card-gh">
+        <i class="fab fa-github"></i>
+        <div>
+          <div class="fc-title">GitHub</div>
+          <div class="fc-val">1.2K Commits</div>
         </div>
       </div>
-    </div>
-  </section>
-
-  <!-- NEWSLETTER -->
-  <section class="newsletter">
-    <div class="container">
-      <div class="newsletter-content">
-        <i class="fas fa-envelope-open-text"></i>
-        <h2>Subscribe to Our Newsletter</h2>
-        <p>Get exclusive deals, new arrivals and more delivered to your inbox.</p>
-        <form class="newsletter-form" onsubmit="subscribeNewsletter(event)">
-          <input type="email" placeholder="Enter your email address" required />
-          <button type="submit" class="btn btn-primary">Subscribe</button>
-        </form>
+      <div class="floating-card card-gfg">
+        <i class="fas fa-code"></i>
+        <div>
+          <div class="fc-title">GFG</div>
+          <div class="fc-val">Score 1850</div>
+        </div>
       </div>
-    </div>
-  </section>
-
-  <!-- FOOTER -->
-  <footer class="footer" id="contact">
-    <div class="container">
-      <div class="footer-grid">
-        <div class="footer-brand">
-          <a href="index.html" class="logo"><i class="fas fa-shopping-bag"></i> ShopZone</a>
-          <p>Your one-stop destination for all your shopping needs. Quality products, great prices.</p>
-          <div class="social-links">
-            <a href="#"><i class="fab fa-facebook-f"></i></a>
-            <a href="#"><i class="fab fa-twitter"></i></a>
-            <a href="#"><i class="fab fa-instagram"></i></a>
-            <a href="#"><i class="fab fa-youtube"></i></a>
+      <div class="dashboard-preview">
+        <div class="dp-header">
+          <div class="dp-dot red"></div>
+          <div class="dp-dot yellow"></div>
+          <div class="dp-dot green"></div>
+          <span>EDU TECH Dashboard</span>
+        </div>
+        <div class="dp-body">
+          <div class="dp-bar" style="width:85%;background:#f89f1b"></div>
+          <div class="dp-bar" style="width:65%;background:#6e5ce7"></div>
+          <div class="dp-bar" style="width:75%;background:#2ea44f"></div>
+          <div class="dp-chart">
+            <div class="dc-col" style="height:40%"></div>
+            <div class="dc-col" style="height:60%"></div>
+            <div class="dc-col" style="height:80%"></div>
+            <div class="dc-col" style="height:55%"></div>
+            <div class="dc-col" style="height:90%"></div>
+            <div class="dc-col" style="height:70%"></div>
+            <div class="dc-col" style="height:85%"></div>
           </div>
         </div>
-        <div class="footer-links">
-          <h4>Quick Links</h4>
-          <ul>
-            <li><a href="index.html">Home</a></li>
-            <li><a href="products.html">Products</a></li>
-            <li><a href="cart.html">Cart</a></li>
-            <li><a href="checkout.html">Checkout</a></li>
-          </ul>
-        </div>
-        <div class="footer-links">
-          <h4>Customer Service</h4>
-          <ul>
-            <li><a href="#">FAQ</a></li>
-            <li><a href="#">Returns Policy</a></li>
-            <li><a href="#">Shipping Info</a></li>
-            <li><a href="#">Track Order</a></li>
-          </ul>
-        </div>
-        <div class="footer-contact">
-          <h4>Contact Us</h4>
-          <p><i class="fas fa-map-marker-alt"></i> 123 Shop Street, NY 10001</p>
-          <p><i class="fas fa-phone"></i> +1 (555) 123-4567</p>
-          <p><i class="fas fa-envelope"></i> support@shopzone.com</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───── FEATURES ───── -->
+  <section class="section" id="features">
+    <div class="section-header">
+      <div class="section-tag">What We Offer</div>
+      <h2>Everything You Need to <span class="gradient-text">Level Up</span></h2>
+      <p>One unified dashboard to track all your coding activities and daily progress.</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon lc-color"><i class="fas fa-code"></i></div>
+        <h3>LeetCode Tracker</h3>
+        <p>Monitor your problem-solving stats — easy, medium, hard breakdowns and streaks.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon gh-color"><i class="fab fa-github"></i></div>
+        <h3>GitHub Analytics</h3>
+        <p>View contribution graphs, repository stats, followers, and commit history.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon gfg-color"><i class="fas fa-laptop-code"></i></div>
+        <h3>GeeksForGeeks Stats</h3>
+        <p>Track your GFG coding score, institute rank, and article contributions.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon day-color"><i class="fas fa-chart-line"></i></div>
+        <h3>User of the Day</h3>
+        <p>Daily leaderboard highlighting the most active coder across all platforms.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon streak-color"><i class="fas fa-fire"></i></div>
+        <h3>Streak Tracker</h3>
+        <p>Keep your daily coding streak alive with reminders and milestone badges.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon rank-color"><i class="fas fa-trophy"></i></div>
+        <h3>Live Leaderboard</h3>
+        <p>Compete with peers and see where you stand on the daily rankings.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───── PLATFORMS ───── -->
+  <section class="section platforms-section" id="platforms">
+    <div class="section-header">
+      <div class="section-tag">Integrated Platforms</div>
+      <h2>Track Across <span class="gradient-text">Top Platforms</span></h2>
+    </div>
+    <div class="platforms-grid">
+      <div class="platform-card lc-card">
+        <div class="platform-logo"><i class="fas fa-code" style="color:#f89f1b;font-size:2.5rem"></i></div>
+        <h3>LeetCode</h3>
+        <p>The world's most popular coding interview platform with 3000+ problems.</p>
+        <a href="https://leetcode.com" target="_blank" class="platform-link">Visit LeetCode <i class="fas fa-arrow-right"></i></a>
+      </div>
+      <div class="platform-card gh-card">
+        <div class="platform-logo"><i class="fab fa-github" style="color:#e6edf3;font-size:2.5rem"></i></div>
+        <h3>GitHub</h3>
+        <p>Host code, collaborate on projects, and showcase your open-source work.</p>
+        <a href="https://github.com" target="_blank" class="platform-link">Visit GitHub <i class="fas fa-arrow-right"></i></a>
+      </div>
+      <div class="platform-card gfg-card">
+        <div class="platform-logo"><i class="fas fa-laptop-code" style="color:#2f8d46;font-size:2.5rem"></i></div>
+        <h3>GeeksForGeeks</h3>
+        <p>CS portal with articles, courses, and a large competitive coding community.</p>
+        <a href="https://geeksforgeeks.org" target="_blank" class="platform-link">Visit GFG <i class="fas fa-arrow-right"></i></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───── ABOUT ───── -->
+  <section class="section about-section" id="about">
+    <div class="about-content">
+      <div class="about-text">
+        <div class="section-tag">About EDU TECH</div>
+        <h2>Built for <span class="gradient-text">Coders</span>, by Coders</h2>
+        <p>EDU TECH is a free platform designed to help students and developers track their progress across the most important coding platforms. Stop switching between tabs — see everything in one place.</p>
+        <ul class="about-list">
+          <li><i class="fas fa-check-circle"></i> Real-time stats from LeetCode, GitHub & GFG</li>
+          <li><i class="fas fa-check-circle"></i> Daily User of the Day recognition</li>
+          <li><i class="fas fa-check-circle"></i> Beautiful, distraction-free dashboard</li>
+          <li><i class="fas fa-check-circle"></i> 100% free, no account required</li>
+        </ul>
+        <a href="dashboard.html" class="btn btn-primary btn-large">
+          <i class="fas fa-th-large"></i> Open Dashboard
+        </a>
+      </div>
+      <div class="about-visual">
+        <div class="av-card">
+          <i class="fas fa-award" style="color:#f89f1b;font-size:3rem"></i>
+          <h3>User of the Day</h3>
+          <div class="av-user">
+            <div class="av-avatar">A</div>
+            <div>
+              <div class="av-name">Alex Johnson</div>
+              <div class="av-score">Score: 2450 pts today</div>
+            </div>
+          </div>
+          <div class="av-platforms">
+            <span class="ap-badge lc">LC: 12 solved</span>
+            <span class="ap-badge gh">GH: 8 commits</span>
+            <span class="ap-badge gfg">GFG: 5 articles</span>
+          </div>
         </div>
       </div>
-      <div class="footer-bottom">
-        <p>&copy; 2026 ShopZone. All rights reserved.</p>
-        <div class="payment-icons">
-          <i class="fab fa-cc-visa"></i>
-          <i class="fab fa-cc-mastercard"></i>
-          <i class="fab fa-cc-paypal"></i>
-          <i class="fab fa-cc-apple-pay"></i>
+    </div>
+  </section>
+
+  <!-- ───── FOOTER ───── -->
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-brand">
+        <div class="nav-logo">
+          <div class="logo-icon"><i class="fas fa-graduation-cap"></i></div>
+          <span class="logo-text">EDU<span class="accent">TECH</span></span>
+        </div>
+        <p>Your all-in-one coding progress tracker.</p>
+      </div>
+      <div class="footer-links">
+        <div class="fl-col">
+          <h4>Platforms</h4>
+          <a href="https://leetcode.com" target="_blank">LeetCode</a>
+          <a href="https://github.com" target="_blank">GitHub</a>
+          <a href="https://geeksforgeeks.org" target="_blank">GeeksForGeeks</a>
+        </div>
+        <div class="fl-col">
+          <h4>Navigate</h4>
+          <a href="#home">Home</a>
+          <a href="#features">Features</a>
+          <a href="dashboard.html">Dashboard</a>
         </div>
       </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 EDU TECH. Built with <i class="fas fa-heart" style="color:#e25555"></i> for coders.</p>
     </div>
   </footer>
 
-  <script src="products.js"></script>
-  <script src="cart.js"></script>
-  <script src="app.js"></script>
   <script>
-    // Render featured products on homepage
-    document.addEventListener('DOMContentLoaded', () => {
-      updateCartCount();
-      renderFeaturedProducts();
-      startCountdown();
+    // Navbar scroll effect
+    window.addEventListener('scroll', () => {
+      document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 50);
     });
-
-    function handleSearch() {
-      const q = document.getElementById('search-input').value.trim();
-      if (q) window.location.href = `products.html?search=${encodeURIComponent(q)}`;
-    }
-    document.getElementById('search-input').addEventListener('keypress', e => {
-      if (e.key === 'Enter') handleSearch();
-    });
-
-    function subscribeNewsletter(e) {
-      e.preventDefault();
-      showToast('Thank you for subscribing!', 'success');
-      e.target.reset();
-    }
-
-    function startCountdown() {
-      const end = new Date();
-      end.setDate(end.getDate() + 3);
-      setInterval(() => {
-        const now = new Date();
-        const diff = end - now;
-        if (diff <= 0) return;
-        document.getElementById('days').textContent    = String(Math.floor(diff / 86400000)).padStart(2,'0');
-        document.getElementById('hours').textContent   = String(Math.floor((diff % 86400000) / 3600000)).padStart(2,'0');
-        document.getElementById('minutes').textContent = String(Math.floor((diff % 3600000) / 60000)).padStart(2,'0');
-        document.getElementById('seconds').textContent = String(Math.floor((diff % 60000) / 1000)).padStart(2,'0');
-      }, 1000);
-    }
-
     // Hamburger menu
     document.getElementById('hamburger').addEventListener('click', () => {
-      document.getElementById('mobile-menu').classList.toggle('open');
+      document.querySelector('.nav-links').classList.toggle('open');
     });
   </script>
 </body>

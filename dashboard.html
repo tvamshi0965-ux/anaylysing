@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EDU TECH – Dashboard</title>
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body class="dashboard-page">
+
+<!-- ═══════════════════════════════════════
+     SOLUTION MODAL
+═══════════════════════════════════════ -->
+<div class="modal-overlay" id="solutionModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div>
+        <div class="modal-badge" id="modal-diff-badge">Easy</div>
+        <h2 id="modal-title">Problem Title</h2>
+        <p id="modal-desc" class="modal-desc"></p>
+      </div>
+      <button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-tabs">
+      <button class="modal-tab active" onclick="switchModalTab(this,'approach')">Approach</button>
+      <button class="modal-tab" onclick="switchModalTab(this,'python')">Python</button>
+      <button class="modal-tab" onclick="switchModalTab(this,'java')">Java</button>
+      <button class="modal-tab" onclick="switchModalTab(this,'cpp')">C++</button>
+      <button class="modal-tab" onclick="switchModalTab(this,'js')">JavaScript</button>
+    </div>
+    <div id="modal-approach" class="modal-panel active">
+      <div class="approach-box" id="modal-approach-text"></div>
+    </div>
+    <div id="modal-python" class="modal-panel">
+      <div class="code-header"><span class="code-lang py-dot">Python</span><button onclick="copyCode('modal-code-python')"><i class="fas fa-copy"></i> Copy</button></div>
+      <pre class="code-block" id="modal-code-python"></pre>
+    </div>
+    <div id="modal-java" class="modal-panel">
+      <div class="code-header"><span class="code-lang java-dot">Java</span><button onclick="copyCode('modal-code-java')"><i class="fas fa-copy"></i> Copy</button></div>
+      <pre class="code-block" id="modal-code-java"></pre>
+    </div>
+    <div id="modal-cpp" class="modal-panel">
+      <div class="code-header"><span class="code-lang cpp-dot">C++</span><button onclick="copyCode('modal-code-cpp')"><i class="fas fa-copy"></i> Copy</button></div>
+      <pre class="code-block" id="modal-code-cpp"></pre>
+    </div>
+    <div id="modal-js" class="modal-panel">
+      <div class="code-header"><span class="code-lang js-dot">JavaScript</span><button onclick="copyCode('modal-code-js')"><i class="fas fa-copy"></i> Copy</button></div>
+      <pre class="code-block" id="modal-code-js"></pre>
+    </div>
+    <div class="modal-footer">
+      <span id="modal-complexity"></span>
+      <a id="modal-lc-link" href="#" target="_blank" class="btn btn-outline btn-sm"><i class="fas fa-external-link-alt"></i> Open on LeetCode</a>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     SIDEBAR
+═══════════════════════════════════════ -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon"><i class="fas fa-graduation-cap"></i></div>
+    <span class="logo-text">EDU<span class="accent">TECH</span></span>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section-label">Main</div>
+    <a href="#" class="sidebar-link active" data-tab="overview"><i class="fas fa-th-large"></i><span>Overview</span></a>
+    <a href="#" class="sidebar-link" data-tab="leetcode"><i class="fas fa-code"></i><span>LeetCode</span><span class="badge lc-badge">Analyse</span></a>
+    <a href="#" class="sidebar-link" data-tab="github"><i class="fab fa-github"></i><span>GitHub</span></a>
+    <a href="#" class="sidebar-link" data-tab="geeksforgeeks"><i class="fas fa-laptop-code"></i><span>GeeksForGeeks</span></a>
+
+    <div class="nav-section-label">Analytics</div>
+    <a href="#" class="sidebar-link" data-tab="userday"><i class="fas fa-trophy"></i><span>User of the Day</span><span class="badge day-badge">Live</span></a>
+    <a href="#" class="sidebar-link" data-tab="analyzer"><i class="fas fa-users"></i><span>Daily Analyser</span><span class="badge new-badge">New</span></a>
+    <a href="#" class="sidebar-link" data-tab="solutions"><i class="fas fa-book-open"></i><span>Problem Solutions</span></a>
+    <a href="#" class="sidebar-link" data-tab="analytics"><i class="fas fa-chart-bar"></i><span>Activity Charts</span></a>
+
+    <div class="nav-section-label">More</div>
+    <a href="index.html" class="sidebar-link"><i class="fas fa-home"></i><span>Home</span></a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="sidebar-user">
+      <div class="su-avatar" id="sidebar-avatar-letter">U</div>
+      <div class="su-info">
+        <div class="su-name" id="sidebar-username">Guest User</div>
+        <div class="su-role">Student</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- ═══════════════════════════════════════
+     MAIN WRAPPER
+═══════════════════════════════════════ -->
+<div class="main-wrapper">
+
+  <!-- TOP BAR -->
+  <header class="topbar">
+    <button class="sidebar-toggle" id="sidebarToggle"><i class="fas fa-bars"></i></button>
+    <div class="topbar-title" id="pageTitle">Overview</div>
+    <div class="topbar-right">
+      <div class="search-box">
+        <i class="fas fa-search"></i>
+        <input type="text" placeholder="Paste profile URL or username…" id="globalSearch" />
+      </div>
+      <button class="btn btn-primary btn-sm" id="refreshBtn"><i class="fas fa-sync-alt"></i> Refresh</button>
+      <div class="topbar-date"><i class="fas fa-calendar-alt"></i><span id="currentDate"></span></div>
+    </div>
+  </header>
+
+  <main class="dashboard-main">
+
+    <!-- ══════════════════════════════════
+         TAB: OVERVIEW
+    ══════════════════════════════════ -->
+    <section class="tab-content active" id="tab-overview">
+      <div class="section-title">
+        <h2>Welcome back 👋</h2>
+        <p>Paste your profile URLs below to analyse all platforms at once</p>
+      </div>
+
+      <!-- Quick URL Analyser -->
+      <div class="url-analyser-card">
+        <h3><i class="fas fa-link"></i> Quick Profile Analyser</h3>
+        <p>Paste your profile URLs and click Analyse to load stats from all platforms</p>
+        <div class="url-inputs-grid">
+          <div class="url-input-row">
+            <span class="url-label lc-label"><i class="fas fa-code"></i> LeetCode</span>
+            <input type="text" id="ov-lc-url" placeholder="https://leetcode.com/u/yourname  or  username" />
+          </div>
+          <div class="url-input-row">
+            <span class="url-label gh-label"><i class="fab fa-github"></i> GitHub</span>
+            <input type="text" id="ov-gh-url" placeholder="https://github.com/yourname  or  username" />
+          </div>
+          <div class="url-input-row">
+            <span class="url-label gfg-label"><i class="fas fa-laptop-code"></i> GFG</span>
+            <input type="text" id="ov-gfg-url" placeholder="https://geeksforgeeks.org/user/yourname  or  username" />
+          </div>
+        </div>
+        <button class="btn btn-primary" id="analyseAllBtn" onclick="analyseAll()">
+          <i class="fas fa-rocket"></i> Analyse All Platforms
+        </button>
+      </div>
+
+      <!-- Summary Cards -->
+      <div class="summary-cards">
+        <div class="sum-card lc-card-border">
+          <div class="sc-left">
+            <div class="sc-icon lc-bg"><i class="fas fa-code"></i></div>
+            <div><div class="sc-label">LeetCode Solved</div><div class="sc-value" id="ov-lc-solved">—</div></div>
+          </div>
+          <div class="sc-trend up" id="ov-lc-trend">—</div>
+        </div>
+        <div class="sum-card gh-card-border">
+          <div class="sc-left">
+            <div class="sc-icon gh-bg"><i class="fab fa-github"></i></div>
+            <div><div class="sc-label">GitHub Repos</div><div class="sc-value" id="ov-gh-commits">—</div></div>
+          </div>
+          <div class="sc-trend up" id="ov-gh-trend">—</div>
+        </div>
+        <div class="sum-card gfg-card-border">
+          <div class="sc-left">
+            <div class="sc-icon gfg-bg"><i class="fas fa-laptop-code"></i></div>
+            <div><div class="sc-label">GFG Score</div><div class="sc-value" id="ov-gfg-score">—</div></div>
+          </div>
+          <div class="sc-trend up" id="ov-gfg-trend">—</div>
+        </div>
+        <div class="sum-card day-card-border">
+          <div class="sc-left">
+            <div class="sc-icon day-bg"><i class="fas fa-fire"></i></div>
+            <div><div class="sc-label">Total Problems</div><div class="sc-value" id="ov-streak">—</div></div>
+          </div>
+          <div class="sc-trend up"><i class="fas fa-fire"></i> Tracking</div>
+        </div>
+      </div>
+
+      <div class="charts-row">
+        <div class="chart-card wide">
+          <div class="chart-header">
+            <h3><i class="fas fa-chart-area"></i> Weekly Activity</h3>
+            <div class="chart-legend">
+              <span class="leg lc-leg">LeetCode</span>
+              <span class="leg gh-leg">GitHub</span>
+              <span class="leg gfg-leg">GFG</span>
+            </div>
+          </div>
+          <canvas id="weeklyChart" height="100"></canvas>
+        </div>
+        <div class="chart-card">
+          <div class="chart-header"><h3><i class="fas fa-chart-pie"></i> Problem Split</h3></div>
+          <canvas id="donutChart" height="180"></canvas>
+          <div class="donut-labels">
+            <span class="dl easy">Easy: <span id="ov-easy-count">—</span></span>
+            <span class="dl medium">Medium: <span id="ov-medium-count">—</span></span>
+            <span class="dl hard">Hard: <span id="ov-hard-count">—</span></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="quick-links">
+        <h3>Quick Jump</h3>
+        <div class="ql-grid">
+          <button class="ql-btn lc-ql" onclick="switchTab('leetcode')"><i class="fas fa-code"></i> LeetCode Analyser</button>
+          <button class="ql-btn gh-ql" onclick="switchTab('github')"><i class="fab fa-github"></i> GitHub Analyser</button>
+          <button class="ql-btn gfg-ql" onclick="switchTab('geeksforgeeks')"><i class="fas fa-laptop-code"></i> GFG Analyser</button>
+          <button class="ql-btn day-ql" onclick="switchTab('analyzer')"><i class="fas fa-users"></i> Daily Analyser</button>
+          <button class="ql-btn sol-ql" onclick="switchTab('solutions')"><i class="fas fa-book-open"></i> Problem Solutions</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════
+         TAB: LEETCODE
+    ══════════════════════════════════ -->
+    <section class="tab-content" id="tab-leetcode">
+      <div class="section-title">
+        <h2><i class="fas fa-code" style="color:#f89f1b"></i> LeetCode Performance Analyser</h2>
+        <p>Paste your LeetCode profile URL to get a full performance breakdown</p>
+      </div>
+
+      <!-- URL Input -->
+      <div class="url-input-card lc-border-card">
+        <div class="uic-icon lc-bg"><i class="fas fa-link"></i></div>
+        <div class="uic-body">
+          <label>LeetCode Profile URL or Username</label>
+          <div class="uic-row">
+            <input type="text" id="lcUrl" placeholder="https://leetcode.com/u/yourname  or  yourname" />
+            <button class="btn btn-primary" id="lcFetchBtn" onclick="fetchLeetCode()">
+              <i class="fas fa-chart-line"></i> Analyse
+            </button>
+            <a href="https://leetcode.com" target="_blank" class="btn btn-outline btn-sm"><i class="fas fa-external-link-alt"></i></a>
+          </div>
+          <p class="uic-hint">e.g. https://leetcode.com/u/neal_wu/ or just <em>neal_wu</em></p>
+        </div>
+      </div>
+
+      <!-- Profile Card -->
+      <div class="platform-profile lc-profile" id="lc-profile-card" style="display:none">
+        <div class="pp-avatar lc-avatar"><i class="fas fa-user-circle"></i></div>
+        <div class="pp-info">
+          <h3 id="lc-display-name">—</h3>
+          <div class="pp-meta">
+            <span><i class="fas fa-star"></i> Rank: <strong id="lc-rank">—</strong></span>
+            <span><i class="fas fa-fire"></i> Streak: <strong id="lc-streak">—</strong></span>
+            <span><i class="fas fa-calendar"></i> Active Days: <strong id="lc-active-days">—</strong></span>
+            <span><i class="fas fa-trophy"></i> Contests: <strong id="lc-contests">—</strong></span>
+          </div>
+        </div>
+        <div class="profile-score-badge lc-score-badge">
+          <div class="psb-val" id="lc-acceptance">—%</div>
+          <div class="psb-label">Acceptance</div>
+        </div>
+      </div>
+
+      <!-- Difficulty Cards -->
+      <div class="lc-stats-grid" id="lc-stats-section" style="display:none">
+        <div class="diff-card easy-card">
+          <div class="diff-icon"><i class="fas fa-check-circle"></i></div>
+          <div class="diff-label">Easy</div>
+          <div class="diff-value" id="lc-easy">0</div>
+          <div class="diff-total">/ <span id="lc-easy-total">850</span></div>
+          <div class="diff-bar"><div class="diff-fill easy-fill" id="lc-easy-bar" style="width:0%"></div></div>
+          <div class="diff-remaining">Remaining: <strong id="lc-easy-rem" style="color:#00b4d8">—</strong></div>
+        </div>
+        <div class="diff-card medium-card">
+          <div class="diff-icon"><i class="fas fa-minus-circle"></i></div>
+          <div class="diff-label">Medium</div>
+          <div class="diff-value" id="lc-medium">0</div>
+          <div class="diff-total">/ <span id="lc-medium-total">1780</span></div>
+          <div class="diff-bar"><div class="diff-fill medium-fill" id="lc-medium-bar" style="width:0%"></div></div>
+          <div class="diff-remaining">Remaining: <strong id="lc-medium-rem" style="color:#f89f1b">—</strong></div>
+        </div>
+        <div class="diff-card hard-card">
+          <div class="diff-icon"><i class="fas fa-times-circle"></i></div>
+          <div class="diff-label">Hard</div>
+          <div class="diff-value" id="lc-hard">0</div>
+          <div class="diff-total">/ <span id="lc-hard-total">750</span></div>
+          <div class="diff-bar"><div class="diff-fill hard-fill" id="lc-hard-bar" style="width:0%"></div></div>
+          <div class="diff-remaining">Remaining: <strong id="lc-hard-rem" style="color:#e25555">—</strong></div>
+        </div>
+        <div class="diff-card total-card">
+          <div class="diff-icon"><i class="fas fa-layer-group"></i></div>
+          <div class="diff-label">Total Solved</div>
+          <div class="diff-value total-val" id="lc-total">0</div>
+          <div class="diff-total">/ <span id="lc-total-problems">3380</span></div>
+          <div class="diff-bar"><div class="diff-fill total-fill" id="lc-total-bar" style="width:0%"></div></div>
+          <div class="diff-remaining">Remaining: <strong id="lc-total-rem" style="color:#6e5ce7">—</strong></div>
+        </div>
+      </div>
+
+      <!-- Performance Analysis -->
+      <div class="perf-analysis-card" id="lc-perf-section" style="display:none">
+        <h3><i class="fas fa-brain"></i> Performance Analysis</h3>
+        <div class="perf-grid">
+          <div class="perf-item">
+            <div class="perf-label">Skill Level</div>
+            <div class="skill-bar-wrap">
+              <div class="skill-bar-track"><div class="skill-bar-fill lc-skill" id="lc-skill-bar" style="width:0%"></div></div>
+              <span class="skill-label" id="lc-skill-label">—</span>
+            </div>
+          </div>
+          <div class="perf-item">
+            <div class="perf-label">Easy Completion</div>
+            <div class="skill-bar-wrap">
+              <div class="skill-bar-track"><div class="skill-bar-fill easy-skill" id="lc-easy-skill" style="width:0%"></div></div>
+              <span class="skill-label" id="lc-easy-pct-label">0%</span>
+            </div>
+          </div>
+          <div class="perf-item">
+            <div class="perf-label">Medium Completion</div>
+            <div class="skill-bar-wrap">
+              <div class="skill-bar-track"><div class="skill-bar-fill medium-skill" id="lc-medium-skill" style="width:0%"></div></div>
+              <span class="skill-label" id="lc-medium-pct-label">0%</span>
+            </div>
+          </div>
+          <div class="perf-item">
+            <div class="perf-label">Hard Completion</div>
+            <div class="skill-bar-wrap">
+              <div class="skill-bar-track"><div class="skill-bar-fill hard-skill" id="lc-hard-skill" style="width:0%"></div></div>
+              <span class="skill-label" id="lc-hard-pct-label">0%</span>
+            </div>
+          </div>
+        </div>
+        <div class="insight-box" id="lc-insight-box"></div>
+      </div>
+
+      <div class="charts-row" id="lc-charts-section" style="display:none">
+        <div class="chart-card wide">
+          <div class="chart-header"><h3>Submission Activity (Last 15 Days)</h3></div>
+          <canvas id="lcActivityChart" height="110"></canvas>
+        </div>
+        <div class="chart-card">
+          <div class="chart-header"><h3>Language Usage</h3></div>
+          <canvas id="lcLangChart" height="180"></canvas>
+        </div>
+      </div>
+
+      <!-- Remaining Problems to Solve -->
+      <div class="remaining-section" id="lc-remaining-section" style="display:none">
+        <div class="remaining-header">
+          <h3><i class="fas fa-tasks"></i> Recommended Problems to Solve Next</h3>
+          <div class="rem-filters">
+            <button class="filter-btn active" onclick="filterRemaining(this,'all')">All</button>
+            <button class="filter-btn" onclick="filterRemaining(this,'Easy')">Easy</button>
+            <button class="filter-btn" onclick="filterRemaining(this,'Medium')">Medium</button>
+            <button class="filter-btn" onclick="filterRemaining(this,'Hard')">Hard</button>
+          </div>
+        </div>
+        <div class="problems-grid" id="remaining-problems-grid"></div>
+      </div>
+
+      <div class="recent-table-card" id="lc-recent-section" style="display:none">
+        <h3><i class="fas fa-history"></i> Recent Submissions</h3>
+        <table class="data-table">
+          <thead><tr><th>#</th><th>Problem</th><th>Difficulty</th><th>Status</th><th>Time</th></tr></thead>
+          <tbody id="lc-recent-tbody"></tbody>
+        </table>
+      </div>
+
+      <!-- Empty state -->
+      <div class="empty-state" id="lc-empty-state">
+        <i class="fas fa-code-branch"></i>
+        <h3>Enter your LeetCode profile URL above</h3>
+        <p>Paste your profile link or username to see your full performance analysis and remaining problems</p>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════
+         TAB: GITHUB
+    ══════════════════════════════════ -->
+    <section class="tab-content" id="tab-github">
+      <div class="section-title">
+        <h2><i class="fab fa-github"></i> GitHub Profile Analyser</h2>
+        <p>Paste your GitHub profile URL to get a full repository and contribution breakdown</p>
+      </div>
+
+      <div class="url-input-card gh-border-card">
+        <div class="uic-icon gh-bg"><i class="fab fa-github"></i></div>
+        <div class="uic-body">
+          <label>GitHub Profile URL or Username</label>
+          <div class="uic-row">
+            <input type="text" id="ghUrl" placeholder="https://github.com/yourname  or  yourname" />
+            <button class="btn btn-primary" id="ghFetchBtn" onclick="fetchGitHub()">
+              <i class="fas fa-chart-line"></i> Analyse
+            </button>
+            <a href="https://github.com" target="_blank" class="btn btn-outline btn-sm"><i class="fas fa-external-link-alt"></i></a>
+          </div>
+          <p class="uic-hint">e.g. https://github.com/torvalds or just <em>torvalds</em></p>
+        </div>
+      </div>
+
+      <div id="gh-profile-section" style="display:none">
+        <div class="platform-profile">
+          <img id="gh-avatar" src="" alt="Avatar" class="gh-avatar-img" />
+          <div class="pp-info">
+            <h3 id="gh-name">—</h3>
+            <div class="gh-handle" id="gh-login">—</div>
+            <p id="gh-bio" class="gh-bio">—</p>
+            <div class="pp-meta">
+              <span><i class="fas fa-map-marker-alt"></i> <span id="gh-location">—</span></span>
+              <span><i class="fas fa-users"></i> Followers: <strong id="gh-followers">—</strong></span>
+              <span><i class="fas fa-user-friends"></i> Following: <strong id="gh-following">—</strong></span>
+              <span><i class="fas fa-book"></i> Repos: <strong id="gh-repos">—</strong></span>
+            </div>
+          </div>
+          <div class="profile-score-badge gh-score-badge">
+            <div class="psb-val" id="gh-stars">—</div>
+            <div class="psb-label">Total Stars</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="gh-stats-grid" id="gh-stats-section" style="display:none">
+        <div class="gh-stat-card"><div class="gsc-icon"><i class="fas fa-code-branch" style="color:#6e5ce7"></i></div><div class="gsc-val" id="gh-commits">—</div><div class="gsc-label">Est. Commits</div></div>
+        <div class="gh-stat-card"><div class="gsc-icon"><i class="fas fa-star" style="color:#f89f1b"></i></div><div class="gsc-val" id="gh-total-stars">—</div><div class="gsc-label">Total Stars</div></div>
+        <div class="gh-stat-card"><div class="gsc-icon"><i class="fas fa-code-fork" style="color:#2ea44f"></i></div><div class="gsc-val" id="gh-forks">—</div><div class="gsc-label">Total Forks</div></div>
+        <div class="gh-stat-card"><div class="gsc-icon"><i class="fas fa-bug" style="color:#e25555"></i></div><div class="gsc-val" id="gh-issues">—</div><div class="gsc-label">Open Issues</div></div>
+      </div>
+
+      <!-- Performance Analysis -->
+      <div class="perf-analysis-card" id="gh-perf-section" style="display:none">
+        <h3><i class="fas fa-brain"></i> GitHub Activity Analysis</h3>
+        <div class="perf-grid">
+          <div class="perf-item"><div class="perf-label">Popularity Score</div>
+            <div class="skill-bar-wrap"><div class="skill-bar-track"><div class="skill-bar-fill gh-skill" id="gh-pop-bar" style="width:0%"></div></div><span class="skill-label" id="gh-pop-label">—</span></div></div>
+          <div class="perf-item"><div class="perf-label">Collaboration (Forks/Stars)</div>
+            <div class="skill-bar-wrap"><div class="skill-bar-track"><div class="skill-bar-fill gh-skill" id="gh-collab-bar" style="width:0%"></div></div><span class="skill-label" id="gh-collab-label">—</span></div></div>
+          <div class="perf-item"><div class="perf-label">Project Diversity</div>
+            <div class="skill-bar-wrap"><div class="skill-bar-track"><div class="skill-bar-fill gh-skill" id="gh-div-bar" style="width:0%"></div></div><span class="skill-label" id="gh-div-label">—</span></div></div>
+        </div>
+        <div class="insight-box" id="gh-insight-box"></div>
+      </div>
+
+      <div class="chart-card full-width" id="gh-heatmap-section" style="display:none">
+        <div class="chart-header"><h3><i class="fas fa-fire"></i> Contribution Heatmap (Simulated — Last 52 Weeks)</h3></div>
+        <div class="heatmap-container" id="ghHeatmap"></div>
+      </div>
+
+      <div class="charts-row" id="gh-charts-section" style="display:none">
+        <div class="chart-card wide"><div class="chart-header"><h3>Stars Per Repository (Top 10)</h3></div><canvas id="ghCommitsChart" height="110"></canvas></div>
+        <div class="chart-card"><div class="chart-header"><h3>Top Languages</h3></div><canvas id="ghLangChart" height="180"></canvas></div>
+      </div>
+
+      <div class="recent-table-card" id="gh-repos-card" style="display:none">
+        <h3><i class="fas fa-book-open"></i> Repositories</h3>
+        <table class="data-table">
+          <thead><tr><th>Repository</th><th>Language</th><th>Stars</th><th>Forks</th><th>Last Updated</th></tr></thead>
+          <tbody id="gh-repos-tbody"></tbody>
+        </table>
+      </div>
+
+      <div class="empty-state" id="gh-empty-state">
+        <i class="fab fa-github"></i>
+        <h3>Enter your GitHub profile URL above</h3>
+        <p>Paste your GitHub link or username to see repositories, languages, stars, and activity analysis</p>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════
+         TAB: GEEKSFORGEEKS
+    ══════════════════════════════════ -->
+    <section class="tab-content" id="tab-geeksforgeeks">
+      <div class="section-title">
+        <h2><i class="fas fa-laptop-code" style="color:#2f8d46"></i> GeeksForGeeks Analyser</h2>
+        <p>Paste your GFG profile URL to get score, rank, and problem breakdown</p>
+      </div>
+
+      <div class="url-input-card gfg-border-card">
+        <div class="uic-icon gfg-bg"><i class="fas fa-laptop-code"></i></div>
+        <div class="uic-body">
+          <label>GeeksForGeeks Profile URL or Username</label>
+          <div class="uic-row">
+            <input type="text" id="gfgUrl" placeholder="https://geeksforgeeks.org/user/yourname  or  yourname" />
+            <button class="btn btn-primary" id="gfgFetchBtn" onclick="fetchGFG()">
+              <i class="fas fa-chart-line"></i> Analyse
+            </button>
+            <a href="https://geeksforgeeks.org" target="_blank" class="btn btn-outline btn-sm"><i class="fas fa-external-link-alt"></i></a>
+          </div>
+          <p class="uic-hint">e.g. https://www.geeksforgeeks.org/user/codername/ or just <em>codername</em></p>
+        </div>
+      </div>
+
+      <div class="platform-profile" id="gfg-profile-card" style="display:none">
+        <div class="pp-avatar gfg-avatar"><i class="fas fa-user-circle"></i></div>
+        <div class="pp-info">
+          <h3 id="gfg-name">—</h3>
+          <div class="pp-meta">
+            <span><i class="fas fa-medal"></i> Institute Rank: <strong id="gfg-inst-rank">—</strong></span>
+            <span><i class="fas fa-globe"></i> Global Rank: <strong id="gfg-global-rank">—</strong></span>
+            <span><i class="fas fa-calendar-check"></i> Streak: <strong id="gfg-streak">—</strong></span>
+          </div>
+        </div>
+        <div class="profile-score-badge gfg-score-badge">
+          <div class="psb-val" id="gfg-score-badge">—</div>
+          <div class="psb-label">Coding Score</div>
+        </div>
+      </div>
+
+      <div class="gfg-stats-grid" id="gfg-stats-section" style="display:none">
+        <div class="gfg-stat-card"><div class="gsc-icon"><i class="fas fa-trophy" style="color:#f89f1b"></i></div><div class="gsc-val" id="gfg-score">—</div><div class="gsc-label">Coding Score</div></div>
+        <div class="gfg-stat-card"><div class="gsc-icon"><i class="fas fa-check-double" style="color:#2f8d46"></i></div><div class="gsc-val" id="gfg-problems">—</div><div class="gsc-label">Problems Solved</div></div>
+        <div class="gfg-stat-card"><div class="gsc-icon"><i class="fas fa-check-circle" style="color:#00b4d8"></i></div><div class="gsc-val" id="gfg-easy">—</div><div class="gsc-label">Easy Solved</div></div>
+        <div class="gfg-stat-card"><div class="gsc-icon"><i class="fas fa-minus-circle" style="color:#f89f1b"></i></div><div class="gsc-val" id="gfg-medium">—</div><div class="gsc-label">Medium Solved</div></div>
+        <div class="gfg-stat-card"><div class="gsc-icon"><i class="fas fa-times-circle" style="color:#e25555"></i></div><div class="gsc-val" id="gfg-hard">—</div><div class="gsc-label">Hard Solved</div></div>
+        <div class="gfg-stat-card"><div class="gsc-icon"><i class="fas fa-graduation-cap" style="color:#6e5ce7"></i></div><div class="gsc-val" id="gfg-courses">—</div><div class="gsc-label">Courses Done</div></div>
+      </div>
+
+      <!-- Performance Analysis -->
+      <div class="perf-analysis-card" id="gfg-perf-section" style="display:none">
+        <h3><i class="fas fa-brain"></i> GFG Performance Analysis</h3>
+        <div class="perf-grid">
+          <div class="perf-item"><div class="perf-label">Overall Skill</div>
+            <div class="skill-bar-wrap"><div class="skill-bar-track"><div class="skill-bar-fill gfg-skill" id="gfg-skill-bar" style="width:0%"></div></div><span class="skill-label" id="gfg-skill-label">—</span></div></div>
+          <div class="perf-item"><div class="perf-label">Easy Mastery</div>
+            <div class="skill-bar-wrap"><div class="skill-bar-track"><div class="skill-bar-fill easy-skill" id="gfg-easy-skill" style="width:0%"></div></div><span class="skill-label" id="gfg-easy-pct">—</span></div></div>
+          <div class="perf-item"><div class="perf-label">Medium Mastery</div>
+            <div class="skill-bar-wrap"><div class="skill-bar-track"><div class="skill-bar-fill medium-skill" id="gfg-medium-skill" style="width:0%"></div></div><span class="skill-label" id="gfg-medium-pct">—</span></div></div>
+          <div class="perf-item"><div class="perf-label">Hard Mastery</div>
+            <div class="skill-bar-wrap"><div class="skill-bar-track"><div class="skill-bar-fill hard-skill" id="gfg-hard-skill" style="width:0%"></div></div><span class="skill-label" id="gfg-hard-pct">—</span></div></div>
+        </div>
+        <div class="insight-box" id="gfg-insight-box"></div>
+      </div>
+
+      <div class="charts-row" id="gfg-charts-section" style="display:none">
+        <div class="chart-card wide"><div class="chart-header"><h3>Monthly Problem Solving</h3></div><canvas id="gfgActivityChart" height="110"></canvas></div>
+        <div class="chart-card"><div class="chart-header"><h3>Topic Mastery</h3></div><canvas id="gfgTopicChart" height="180"></canvas></div>
+      </div>
+
+      <!-- GFG Remaining Problems -->
+      <div class="remaining-section" id="gfg-remaining-section" style="display:none">
+        <div class="remaining-header">
+          <h3><i class="fas fa-tasks"></i> Recommended GFG Problems</h3>
+          <div class="rem-filters">
+            <button class="filter-btn active" onclick="filterGFGRemaining(this,'all')">All</button>
+            <button class="filter-btn" onclick="filterGFGRemaining(this,'Easy')">Easy</button>
+            <button class="filter-btn" onclick="filterGFGRemaining(this,'Medium')">Medium</button>
+            <button class="filter-btn" onclick="filterGFGRemaining(this,'Hard')">Hard</button>
+          </div>
+        </div>
+        <div class="problems-grid" id="gfg-remaining-grid"></div>
+      </div>
+
+      <div class="empty-state" id="gfg-empty-state">
+        <i class="fas fa-laptop-code"></i>
+        <h3>Enter your GFG profile URL above</h3>
+        <p>Paste your GeeksForGeeks profile link or username to see your coding score, rankings, and topic analysis</p>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════
+         TAB: USER OF THE DAY
+    ══════════════════════════════════ -->
+    <section class="tab-content" id="tab-userday">
+      <div class="section-title">
+        <h2><i class="fas fa-trophy" style="color:#f89f1b"></i> User of the Day</h2>
+        <p>Today's top coders — go to Daily Analyser tab to add URLs and compete</p>
+      </div>
+      <div class="podium-section">
+        <div class="podium-card second"><div class="podium-crown">🥈</div><div class="podium-avatar" style="background:#6e5ce7" id="pod2-avatar">S</div><div class="podium-name" id="pod2-name">Sara M.</div><div class="podium-score" id="pod2-score">2,180 pts</div><div class="podium-block second-block">2nd</div></div>
+        <div class="podium-card first"><div class="podium-crown">🏆</div><div class="podium-avatar" style="background:#f89f1b" id="pod1-avatar">A</div><div class="podium-name" id="pod1-name">Alex J.</div><div class="podium-score" id="pod1-score">2,450 pts</div><div class="podium-block first-block">1st</div></div>
+        <div class="podium-card third"><div class="podium-crown">🥉</div><div class="podium-avatar" style="background:#2ea44f" id="pod3-avatar">R</div><div class="podium-name" id="pod3-name">Raj K.</div><div class="podium-score" id="pod3-score">1,960 pts</div><div class="podium-block third-block">3rd</div></div>
+      </div>
+      <div class="winner-detail-card">
+        <div class="wdc-header">
+          <div class="wdc-avatar" id="wdc-avatar-letter">A</div>
+          <div class="wdc-info"><h3 id="wdc-name">Alex Johnson <span class="champion-badge">🏆 Champion</span></h3><p id="wdc-sub">Today's top performer across LeetCode, GitHub &amp; GeeksForGeeks</p></div>
+          <div class="wdc-points" id="wdc-pts">2,450 <small>pts</small></div>
+        </div>
+        <div class="wdc-breakdown">
+          <div class="wdb-item lc-wdb"><div class="wdb-icon"><i class="fas fa-code"></i></div><div class="wdb-label">LeetCode</div><div class="wdb-val" id="wdc-lc-val">12 problems</div><div class="wdb-pts" id="wdc-lc-pts">+840 pts</div></div>
+          <div class="wdb-item gh-wdb"><div class="wdb-icon"><i class="fab fa-github"></i></div><div class="wdb-label">GitHub</div><div class="wdb-val" id="wdc-gh-val">8 commits</div><div class="wdb-pts" id="wdc-gh-pts">+560 pts</div></div>
+          <div class="wdb-item gfg-wdb"><div class="wdb-icon"><i class="fas fa-laptop-code"></i></div><div class="wdb-label">GFG</div><div class="wdb-val" id="wdc-gfg-val">5 problems</div><div class="wdb-pts" id="wdc-gfg-pts">+450 pts</div></div>
+          <div class="wdb-item streak-wdb"><div class="wdb-icon"><i class="fas fa-fire"></i></div><div class="wdb-label">Streak Bonus</div><div class="wdb-val" id="wdc-streak-val">23-day streak</div><div class="wdb-pts" id="wdc-streak-pts">+600 pts</div></div>
+        </div>
+      </div>
+      <div class="recent-table-card">
+        <div class="table-header-row"><h3><i class="fas fa-list-ol"></i> Today's Leaderboard</h3><span class="live-indicator"><span class="live-dot"></span> Live</span></div>
+        <table class="data-table leaderboard-table"><thead><tr><th>Rank</th><th>User</th><th>LeetCode</th><th>GitHub</th><th>GFG</th><th>Total Score</th></tr></thead>
+        <tbody id="leaderboard-tbody"></tbody></table>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════
+         TAB: DAILY URL ANALYSER
+    ══════════════════════════════════ -->
+    <section class="tab-content" id="tab-analyzer">
+      <div class="section-title">
+        <h2><i class="fas fa-users" style="color:#6e5ce7"></i> Daily User Analyser</h2>
+        <p>Paste profile URLs from any platform — we'll analyse everyone and crown today's top coder</p>
+      </div>
+
+      <!-- URL Paste Area -->
+      <div class="analyzer-input-card">
+        <h3><i class="fas fa-paste"></i> Paste Profile URLs</h3>
+        <p>Add one URL per line. Supports LeetCode, GitHub, and GeeksForGeeks URLs.</p>
+        <textarea id="urlPasteArea" rows="6" placeholder="https://leetcode.com/u/user1&#10;https://github.com/user1&#10;https://leetcode.com/u/user2&#10;https://geeksforgeeks.org/user/user2&#10;..."></textarea>
+        <div class="analyzer-actions">
+          <button class="btn btn-primary" onclick="runDailyAnalyser()">
+            <i class="fas fa-bolt"></i> Run Analysis
+          </button>
+          <button class="btn btn-outline" onclick="loadSampleUrls()">
+            <i class="fas fa-flask"></i> Load Sample Data
+          </button>
+          <button class="btn btn-outline" onclick="clearAnalyser()">
+            <i class="fas fa-trash"></i> Clear
+          </button>
+        </div>
+        <div class="scoring-info">
+          <strong><i class="fas fa-info-circle"></i> Scoring System:</strong>
+          LeetCode Easy +30 pts · Medium +70 pts · Hard +150 pts · GitHub Star +10 pts · GFG Score ÷10 pts · Streak Day +20 pts
+        </div>
+      </div>
+
+      <!-- Analysis Progress -->
+      <div class="analysis-progress" id="analysis-progress" style="display:none">
+        <div class="ap-bar-wrap"><div class="ap-bar" id="ap-bar" style="width:0%"></div></div>
+        <div class="ap-status" id="ap-status">Analysing…</div>
+      </div>
+
+      <!-- Results -->
+      <div id="analyser-results" style="display:none">
+        <!-- Podium (dynamic) -->
+        <div class="podium-section" id="analyser-podium"></div>
+
+        <!-- Stats summary -->
+        <div class="summary-cards" id="analyser-summary-cards"></div>
+
+        <!-- Full table -->
+        <div class="recent-table-card">
+          <div class="table-header-row">
+            <h3><i class="fas fa-list-ol"></i> Full Rankings</h3>
+            <span class="live-indicator"><span class="live-dot"></span> Today</span>
+          </div>
+          <table class="data-table leaderboard-table">
+            <thead><tr><th>Rank</th><th>Username</th><th>Platform</th><th>LC Solved</th><th>GH Repos</th><th>GFG Score</th><th>Total Score</th><th>Action</th></tr></thead>
+            <tbody id="analyser-tbody"></tbody>
+          </table>
+        </div>
+
+        <!-- Charts -->
+        <div class="charts-row">
+          <div class="chart-card wide"><div class="chart-header"><h3>Score Comparison</h3></div><canvas id="analyserCompareChart" height="110"></canvas></div>
+          <div class="chart-card"><div class="chart-header"><h3>Platform Distribution</h3></div><canvas id="analyserPieChart" height="180"></canvas></div>
+        </div>
+      </div>
+
+      <div class="empty-state" id="analyser-empty">
+        <i class="fas fa-users"></i>
+        <h3>No data yet</h3>
+        <p>Paste profile URLs above and click Run Analysis to compare users</p>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════
+         TAB: PROBLEM SOLUTIONS LIBRARY
+    ══════════════════════════════════ -->
+    <section class="tab-content" id="tab-solutions">
+      <div class="section-title">
+        <h2><i class="fas fa-book-open" style="color:#6e5ce7"></i> Problem Solutions Library</h2>
+        <p>Browse solutions for LeetCode &amp; GFG problems with multiple language implementations</p>
+      </div>
+
+      <!-- Search & Filter -->
+      <div class="solutions-toolbar">
+        <div class="sol-search">
+          <i class="fas fa-search"></i>
+          <input type="text" id="solSearch" placeholder="Search problems…" oninput="filterSolutions()" />
+        </div>
+        <div class="sol-filters">
+          <select id="solPlatform" onchange="filterSolutions()">
+            <option value="all">All Platforms</option>
+            <option value="leetcode">LeetCode</option>
+            <option value="gfg">GeeksForGeeks</option>
+          </select>
+          <select id="solDifficulty" onchange="filterSolutions()">
+            <option value="all">All Difficulties</option>
+            <option value="Easy">Easy</option>
+            <option value="Medium">Medium</option>
+            <option value="Hard">Hard</option>
+          </select>
+          <select id="solTopic" onchange="filterSolutions()">
+            <option value="all">All Topics</option>
+            <option value="Array">Array</option>
+            <option value="String">String</option>
+            <option value="Dynamic Programming">Dynamic Programming</option>
+            <option value="Tree">Tree</option>
+            <option value="Graph">Graph</option>
+            <option value="Linked List">Linked List</option>
+            <option value="Binary Search">Binary Search</option>
+            <option value="Backtracking">Backtracking</option>
+            <option value="Stack">Stack</option>
+            <option value="Heap">Heap</option>
+          </select>
+        </div>
+        <div class="sol-stats-bar">
+          <span id="sol-count">0 problems</span>
+        </div>
+      </div>
+
+      <div class="problems-grid" id="solutions-grid"></div>
+    </section>
+
+    <!-- ══════════════════════════════════
+         TAB: ACTIVITY CHARTS
+    ══════════════════════════════════ -->
+    <section class="tab-content" id="tab-analytics">
+      <div class="section-title">
+        <h2><i class="fas fa-chart-bar" style="color:#6e5ce7"></i> Activity Charts</h2>
+        <p>Deep dive into daily, weekly and monthly coding patterns</p>
+      </div>
+      <div class="filter-bar">
+        <button class="filter-btn active" onclick="setRange(this,'7d')">7 Days</button>
+        <button class="filter-btn" onclick="setRange(this,'30d')">30 Days</button>
+        <button class="filter-btn" onclick="setRange(this,'90d')">90 Days</button>
+        <button class="filter-btn" onclick="setRange(this,'1y')">1 Year</button>
+      </div>
+      <div class="analytics-kpis">
+        <div class="kpi-card"><div class="kpi-icon"><i class="fas fa-bolt" style="color:#f89f1b"></i></div><div class="kpi-val" id="kpi-total-activity">425</div><div class="kpi-label">Total Activities</div><div class="kpi-sub">Last 7 days</div></div>
+        <div class="kpi-card"><div class="kpi-icon"><i class="fas fa-clock" style="color:#6e5ce7"></i></div><div class="kpi-val" id="kpi-avg-daily">60.7</div><div class="kpi-label">Avg / Day</div><div class="kpi-sub">Activities per day</div></div>
+        <div class="kpi-card"><div class="kpi-icon"><i class="fas fa-arrow-trend-up" style="color:#2ea44f"></i></div><div class="kpi-val" id="kpi-best-day">98</div><div class="kpi-label">Best Day</div><div class="kpi-sub">Most active day</div></div>
+        <div class="kpi-card"><div class="kpi-icon"><i class="fas fa-fire" style="color:#e25555"></i></div><div class="kpi-val" id="kpi-streak">23</div><div class="kpi-label">Current Streak</div><div class="kpi-sub">Days in a row</div></div>
+      </div>
+      <div class="charts-row">
+        <div class="chart-card full-width"><div class="chart-header"><h3><i class="fas fa-chart-line"></i> Daily Activity Trend</h3></div><canvas id="activityTrendChart" height="90"></canvas></div>
+      </div>
+      <div class="charts-row">
+        <div class="chart-card"><div class="chart-header"><h3>Platform Distribution</h3></div><canvas id="platformPieChart" height="180"></canvas></div>
+        <div class="chart-card wide"><div class="chart-header"><h3>Hourly Activity Heatmap</h3></div><div class="hourly-heatmap" id="hourlyHeatmap"></div></div>
+      </div>
+      <div class="charts-row">
+        <div class="chart-card full-width"><div class="chart-header"><h3>Weekly Performance Comparison</h3></div><canvas id="weeklyCompareChart" height="90"></canvas></div>
+      </div>
+    </section>
+
+  </main>
+</div><!-- /.main-wrapper -->
+
+<script src="js/dashboard.js"></script>
+</body>
+</html>
