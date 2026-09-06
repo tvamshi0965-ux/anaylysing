@@ -31,7 +31,10 @@ function parseProfileUrl(raw) {
     { rx: /leetcode\.com\/u\/([^\/\?#\s]+)/i, platform: "leetcode" },
     { rx: /leetcode\.com\/([^\/\?#\s]+)\/?$/i, platform: "leetcode" },
     { rx: /github\.com\/([^\/\?#\s]+)\/?$/i, platform: "github" },
-    { rx: /geeksforgeeks\.org\/user\/([^\/\?#\s]+)/i, platform: "gfg" },
+    {
+      rx: /geeksforgeeks\.org\/(?:user|profile)\/([^\/\?#\s]+)/i,
+      platform: "gfg",
+    },
   ];
   for (const p of patterns) {
     const m = raw.match(p.rx);
@@ -1140,7 +1143,7 @@ function buildGHReposTable(repos) {
 }
 
 /* ─────────────────────────────────────────────────
-   GEEKSFORGEEKS  – community API + mock fallback
+  GEEKSFORGEEKS  – community API
 ───────────────────────────────────────────────── */
 async function fetchGFG() {
   const raw = document.getElementById("gfgUrl")?.value.trim();
@@ -1156,8 +1159,9 @@ async function fetchGFG() {
   try {
     // Community GFG stats API
     const res = await fetch(
-      `https://geeks-for-geeks-stats-api.vercel.app/?raw=Y&userName=${username}`,
+      `https://geeks-for-geeks-stats-api.vercel.app/?raw=Y&userName=${encodeURIComponent(username)}`,
     );
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const json = await res.json();
     if (json.error || !json.info) throw new Error("Not found");
     applyGFGData(json, username);
@@ -1172,11 +1176,14 @@ async function fetchGFG() {
 function applyGFGData(json, username) {
   const info = json.info || {};
   const stats = json.solvedStats || {};
-  const easy = stats.easy?.count || stats.EASY?.count || rand(40, 120);
-  const medium = stats.medium?.count || stats.MEDIUM?.count || rand(20, 90);
-  const hard = stats.hard?.count || stats.HARD?.count || rand(5, 50);
-  const total = parseInt(info.totalProblemsSolved || 0) || easy + medium + hard;
-  const score = parseInt(info.codingScore || 0) || rand(500, 3000);
+  const easy = Number(stats.easy?.count ?? stats.EASY?.count);
+  const medium = Number(stats.medium?.count ?? stats.MEDIUM?.count);
+  const hard = Number(stats.hard?.count ?? stats.HARD?.count);
+  const total = Number(info.totalProblemsSolved);
+  const score = Number(info.codingScore);
+  if (![easy, medium, hard, total, score].every(Number.isFinite)) {
+    throw new Error("Incomplete GFG response");
+  }
 
   applyGFGDisplay({
     username,
@@ -1190,26 +1197,6 @@ function applyGFGData(json, username) {
     medium,
     hard,
     courses: rand(1, 6),
-  });
-}
-
-function applyGFGMock(username) {
-  const seed = username.length;
-  const easy = 30 + ((seed * 11) % 120);
-  const medium = 15 + ((seed * 7) % 90);
-  const hard = 2 + ((seed * 3) % 40);
-  applyGFGDisplay({
-    username,
-    name: username,
-    instituteRank: `#${((seed * 7) % 50) + 1}`,
-    globalRank: `#${((seed * 1337) % 10000) + 100}`,
-    streak: ((seed * 3) % 30) + 1,
-    score: easy * 8 + medium * 15 + hard * 25,
-    total: easy + medium + hard,
-    easy,
-    medium,
-    hard,
-    courses: (seed % 5) + 1,
   });
 }
 
