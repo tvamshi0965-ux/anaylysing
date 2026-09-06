@@ -515,8 +515,15 @@ async function fetchLeetCode() {
     }
 
     const json = await res.json();
-    if (json.errors || !json.data?.matchedUser) {
+    if (!json.data?.matchedUser) {
       throw new Error("User not found");
+    }
+    if (
+      json.errors ||
+      !Array.isArray(json.data.matchedUser.submitStats?.acSubmissionNum) ||
+      !Array.isArray(json.data.allQuestionsCount)
+    ) {
+      throw new Error("Incomplete LeetCode response");
     }
 
     populateLeetCode(json.data, username);
@@ -534,9 +541,9 @@ async function fetchLeetCode() {
       return;
     }
 
-    populateLeetCodeMock(username);
+    clearLeetCodeData();
     showToast(
-      `Live LeetCode service is temporarily unavailable. Showing demo stats for "${username}"`,
+      `Live LeetCode data is unavailable for "${username}". No estimated values were shown.`,
       "warn",
     );
   } finally {
@@ -555,9 +562,12 @@ function populateLeetCode(data, username) {
   const all =
     stats.find((s) => s.difficulty === "All")?.count || easy + medium + hard;
 
-  const eT = totals.find((q) => q.difficulty === "Easy")?.count || 850;
-  const mT = totals.find((q) => q.difficulty === "Medium")?.count || 1780;
-  const hT = totals.find((q) => q.difficulty === "Hard")?.count || 750;
+  const eT = totals.find((q) => q.difficulty === "Easy")?.count;
+  const mT = totals.find((q) => q.difficulty === "Medium")?.count;
+  const hT = totals.find((q) => q.difficulty === "Hard")?.count;
+  if (![eT, mT, hT].every(Number.isFinite)) {
+    throw new Error("Incomplete LeetCode totals");
+  }
   const aT = eT + mT + hT;
 
   applyLeetCodeData({
@@ -579,26 +589,16 @@ function populateLeetCode(data, username) {
   });
 }
 
-function populateLeetCodeMock(username) {
-  const seed = username.length;
-  const easy = 50 + ((seed * 17) % 200);
-  const medium = 30 + ((seed * 13) % 150);
-  const hard = 5 + ((seed * 7) % 80);
-  applyLeetCodeData({
-    username,
-    displayName: username,
-    rank: `#${(10000 + seed * 1234) % 99999}`,
-    streak: 5 + (seed % 30),
-    activeDays: 50 + (seed % 200),
-    easy,
-    medium,
-    hard,
-    total: easy + medium + hard,
-    easyTotal: 850,
-    mediumTotal: 1780,
-    hardTotal: 750,
-    totalProblems: 3380,
-  });
+function clearLeetCodeData() {
+  [
+    "lc-profile-card",
+    "lc-stats-section",
+    "lc-perf-section",
+    "lc-charts-section",
+    "lc-recent-section",
+    "lc-remaining-section",
+  ].forEach(hide);
+  show("lc-empty-state");
 }
 
 function applyLeetCodeData(d) {
