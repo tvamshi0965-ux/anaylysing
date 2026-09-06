@@ -483,6 +483,7 @@ function buildHourlyHeatmap() {
    LEETCODE  – real GraphQL via CORS proxy
 ───────────────────────────────────────────────── */
 const LC_PROXY = "https://leetcode.com/graphql";
+const LC_STATS_FALLBACK = "https://alfa-leetcode-api.onrender.com/userProfile";
 const LC_QUERY = `
 query getUserData($username: String!) {
   matchedUser(username: $username) {
@@ -544,11 +545,21 @@ async function fetchLeetCode() {
       return;
     }
 
-    clearLeetCodeData();
-    showToast(
-      `Live LeetCode data is unavailable for "${username}". No estimated values were shown.`,
-      "warn",
-    );
+    try {
+      const fallbackRes = await fetch(
+        `${LC_STATS_FALLBACK}/${encodeURIComponent(username)}`,
+      );
+      if (!fallbackRes.ok) throw new Error(`HTTP ${fallbackRes.status}`);
+      const fallbackData = await fallbackRes.json();
+      populateLeetCodeFallback(fallbackData, username);
+      showToast(`✅ LeetCode stats loaded for "${username}"`, "success");
+    } catch {
+      clearLeetCodeData();
+      showToast(
+        `Live LeetCode data is unavailable for "${username}". No estimated values were shown.`,
+        "warn",
+      );
+    }
   } finally {
     hideLoading(btn);
   }
@@ -592,6 +603,50 @@ function populateLeetCode(data, username) {
   });
 }
 
+function populateLeetCodeFallback(data, username) {
+  const values = [
+    data.totalSolved,
+    data.easySolved,
+    data.mediumSolved,
+    data.hardSolved,
+    data.totalEasy,
+    data.totalMedium,
+    data.totalHard,
+    data.totalQuestions,
+    data.ranking,
+  ].map(Number);
+  if (!values.every(Number.isFinite)) {
+    throw new Error("Incomplete LeetCode fallback response");
+  }
+  const [
+    totalSolved,
+    easySolved,
+    mediumSolved,
+    hardSolved,
+    totalEasy,
+    totalMedium,
+    totalHard,
+    totalQuestions,
+    ranking,
+  ] = values;
+
+  applyLeetCodeData({
+    username,
+    displayName: username,
+    rank: `#${ranking.toLocaleString()}`,
+    streak: "—",
+    activeDays: "—",
+    easy: easySolved,
+    medium: mediumSolved,
+    hard: hardSolved,
+    total: totalSolved,
+    easyTotal: totalEasy,
+    mediumTotal: totalMedium,
+    hardTotal: totalHard,
+    totalProblems: totalQuestions,
+  });
+}
+
 function clearLeetCodeData() {
   [
     "lc-profile-card",
@@ -607,7 +662,10 @@ function clearLeetCodeData() {
 function applyLeetCodeData(d) {
   setText("lc-display-name", d.displayName);
   setText("lc-rank", d.rank);
-  setText("lc-streak", d.streak + " days");
+  setText(
+    "lc-streak",
+    typeof d.streak === "number" ? d.streak + " days" : d.streak,
+  );
   setText("lc-active-days", d.activeDays);
   setText("lc-contests", "—");
 
@@ -684,7 +742,7 @@ function applyLeetCodeData(d) {
       tips.push(
         "🏆 Impressive Hard solve rate — you're ready for FAANG-level interviews!",
       );
-    if (d.streak < 5)
+    if (typeof d.streak === "number" && d.streak < 5)
       tips.push("🔥 Keep a daily streak going — consistency beats intensity.");
     if (tips.length === 0)
       tips.push(
