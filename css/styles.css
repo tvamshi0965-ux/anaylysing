@@ -2173,7 +2173,9 @@ button {
   }
 
   .sidebar {
+    width: min(84vw, 280px);
     transform: translateX(-100%);
+    box-shadow: 18px 0 40px rgba(0, 0, 0, 0.34);
   }
   .sidebar.open {
     transform: translateX(0);
@@ -2222,6 +2224,51 @@ button {
   }
   .summary-cards {
     grid-template-columns: 1fr 1fr;
+  }
+  .dashboard-page .topbar {
+    height: 58px;
+    gap: 8px;
+  }
+  .dashboard-page .topbar-title {
+    font-size: 0.92rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .dashboard-page .dashboard-main {
+    padding: 18px 12px 32px;
+  }
+  .dashboard-page #tab-leetcode .section-title h2 {
+    align-items: flex-start;
+    font-size: 1.25rem;
+  }
+  .dashboard-page #tab-leetcode .section-title h2 i {
+    width: 32px;
+    height: 32px;
+    flex: 0 0 auto;
+  }
+  .dashboard-page #tab-leetcode .lc-stats-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+  .dashboard-page #tab-leetcode .diff-card {
+    min-height: 180px;
+    padding: 18px 12px 14px;
+  }
+  .dashboard-page #tab-leetcode .diff-value {
+    font-size: 1.8rem;
+  }
+  .dashboard-page #tab-leetcode .perf-grid {
+    grid-template-columns: 1fr;
+  }
+  .dashboard-page #tab-leetcode .charts-row {
+    gap: 12px;
+  }
+  .dashboard-page #tab-leetcode .chart-card {
+    padding: 16px;
+  }
+  .dashboard-page .data-table {
+    min-width: 620px;
   }
 }
 
@@ -3028,5 +3075,11 @@ button {
   }
   .data-table {
     min-width: 600px;
+  }
+  .dashboard-page #tab-leetcode .lc-stats-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .dashboard-page #tab-leetcode .perf-grid {
+    grid-template-columns: 1fr;
   }
 }
