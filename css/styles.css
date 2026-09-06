@@ -2588,6 +2588,123 @@ button {
 .dashboard-page .sidebar-link.active {
   box-shadow: inset 3px 0 var(--accent);
 }
+.dashboard-page #tab-leetcode .section-title {
+  border-bottom-color: rgba(248, 159, 27, 0.28);
+}
+.dashboard-page #tab-leetcode .section-title h2 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.dashboard-page #tab-leetcode .section-title h2 i {
+  display: grid;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  border: 1px solid rgba(248, 159, 27, 0.28);
+  border-radius: 11px;
+  background: rgba(248, 159, 27, 0.12);
+  font-size: 1rem;
+}
+.dashboard-page #tab-leetcode .lc-border-card {
+  position: relative;
+  overflow: hidden;
+  border-color: rgba(248, 159, 27, 0.3);
+  background:
+    linear-gradient(115deg, rgba(70, 46, 18, 0.72), rgba(22, 27, 34, 0.96) 48%),
+    var(--bg-card);
+}
+.dashboard-page #tab-leetcode .lc-border-card::after {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 34%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--lc));
+  content: "";
+}
+.dashboard-page #tab-leetcode .lc-bg {
+  color: var(--lc);
+  background: rgba(248, 159, 27, 0.14);
+  border: 1px solid rgba(248, 159, 27, 0.24);
+}
+.dashboard-page #tab-leetcode .lc-stats-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+.dashboard-page #tab-leetcode .diff-card {
+  position: relative;
+  overflow: hidden;
+  min-height: 205px;
+  padding: 22px 18px 18px;
+  background: linear-gradient(
+    160deg,
+    rgba(28, 35, 51, 0.98),
+    rgba(13, 17, 23, 0.92)
+  );
+  transition:
+    transform 0.2s,
+    border-color 0.2s;
+}
+.dashboard-page #tab-leetcode .diff-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+.dashboard-page #tab-leetcode .diff-card::before {
+  position: absolute;
+  inset: 0 0 auto;
+  height: 3px;
+  background: currentColor;
+  content: "";
+  opacity: 0.85;
+}
+.dashboard-page #tab-leetcode .easy-card::before {
+  color: #00b4d8;
+}
+.dashboard-page #tab-leetcode .medium-card::before {
+  color: var(--lc);
+}
+.dashboard-page #tab-leetcode .hard-card::before {
+  color: var(--day);
+}
+.dashboard-page #tab-leetcode .total-card::before {
+  color: var(--accent);
+}
+.dashboard-page #tab-leetcode .diff-value {
+  margin-top: 2px;
+  font-size: clamp(2rem, 3vw, 2.6rem);
+}
+.dashboard-page #tab-leetcode .perf-analysis-card {
+  border-color: rgba(110, 92, 231, 0.3);
+}
+.dashboard-page #tab-leetcode .perf-analysis-card > h3,
+.dashboard-page #tab-leetcode .remaining-header h3,
+.dashboard-page #tab-leetcode .recent-table-card > h3 {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+.dashboard-page #tab-leetcode .perf-analysis-card > h3 i,
+.dashboard-page #tab-leetcode .remaining-header h3 i,
+.dashboard-page #tab-leetcode .recent-table-card > h3 i {
+  color: var(--lc);
+}
+.dashboard-page #tab-leetcode .perf-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+.dashboard-page #tab-leetcode .chart-card,
+.dashboard-page #tab-leetcode .recent-table-card {
+  border-color: rgba(48, 54, 61, 0.9);
+  background: linear-gradient(
+    160deg,
+    rgba(28, 35, 51, 0.96),
+    rgba(13, 17, 23, 0.9)
+  );
+}
+.dashboard-page #tab-leetcode .remaining-section {
+  border-color: rgba(248, 159, 27, 0.24);
+}
+
 .dashboard-page .url-input-card {
   display: flex;
   align-items: flex-start;
