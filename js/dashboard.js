@@ -508,6 +508,19 @@ async function fetchLeetCode() {
   showLoading(btn, "Analysing…");
 
   try {
+    const fallbackRes = await fetch(
+      `${LC_STATS_FALLBACK}/${encodeURIComponent(username)}`,
+    );
+    if (!fallbackRes.ok) throw new Error(`HTTP ${fallbackRes.status}`);
+    const fallbackData = await fallbackRes.json();
+    populateLeetCodeFallback(fallbackData, username);
+    showToast(`✅ LeetCode stats loaded for "${username}"`, "success");
+    return;
+  } catch {
+    // Try LeetCode GraphQL only when the live stats service is unavailable.
+  }
+
+  try {
     const res = await fetch(LC_PROXY, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -545,21 +558,11 @@ async function fetchLeetCode() {
       return;
     }
 
-    try {
-      const fallbackRes = await fetch(
-        `${LC_STATS_FALLBACK}/${encodeURIComponent(username)}`,
-      );
-      if (!fallbackRes.ok) throw new Error(`HTTP ${fallbackRes.status}`);
-      const fallbackData = await fallbackRes.json();
-      populateLeetCodeFallback(fallbackData, username);
-      showToast(`✅ LeetCode stats loaded for "${username}"`, "success");
-    } catch {
-      clearLeetCodeData();
-      showToast(
-        `Live LeetCode data is unavailable for "${username}". No estimated values were shown.`,
-        "warn",
-      );
-    }
+    clearLeetCodeData();
+    showToast(
+      `Live LeetCode data is unavailable for "${username}". No estimated values were shown.`,
+      "warn",
+    );
   } finally {
     hideLoading(btn);
   }
