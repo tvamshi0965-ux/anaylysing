@@ -51,6 +51,15 @@ function setText(id, val) {
   const e = document.getElementById(id);
   if (e) e.textContent = val;
 }
+function setApproachHtml(id, problem) {
+  const e = document.getElementById(id);
+  if (!e) return;
+
+  const raw = problem?.approach || "";
+  const looksLikeHtml = /<\s*(ol|ul|li|p|strong|b|br)/i.test(raw);
+  const html = looksLikeHtml ? raw : buildStepByStepExplanation(problem);
+  e.innerHTML = html;
+}
 function setAttr(id, attr, val) {
   const e = document.getElementById(id);
   if (e) e.setAttribute(attr, val);
@@ -488,6 +497,7 @@ async function fetchLeetCode() {
     showToast("Please enter a LeetCode URL or username", "warn");
     return;
   }
+
   const parsed = parseProfileUrl(raw);
   const username = parsed?.username || raw.trim();
   const btn = document.getElementById("lcFetchBtn");
@@ -499,13 +509,36 @@ async function fetchLeetCode() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ query: LC_QUERY, variables: { username } }),
     });
+
+    if (!res.ok) {
+      throw new Error(`HTTP ${res.status}`);
+    }
+
     const json = await res.json();
-    if (json.errors || !json.data?.matchedUser)
+    if (json.errors || !json.data?.matchedUser) {
       throw new Error("User not found");
+    }
+
     populateLeetCode(json.data, username);
     showToast(`✅ LeetCode stats loaded for "${username}"`, "success");
-  } catch {
-    showToast(`Live LeetCode data is unavailable for "${username}"`, "error");
+  } catch (error) {
+    const userNotFound = String(error?.message || "").includes(
+      "User not found",
+    );
+
+    if (userNotFound) {
+      showToast(
+        `No public LeetCode profile was found for "${username}"`,
+        "warn",
+      );
+      return;
+    }
+
+    populateLeetCodeMock(username);
+    showToast(
+      `Live LeetCode service is temporarily unavailable. Showing demo stats for "${username}"`,
+      "warn",
+    );
   } finally {
     hideLoading(btn);
   }
@@ -2061,3 +2094,349 @@ const LC_PROBLEMS_DB = [
     js: `function maxSubarraySum(arr){\n    let cur=arr[0],res=arr[0];\n    for(let i=1;i<arr.length;i++){cur=Math.max(arr[i],cur+arr[i]);res=Math.max(res,cur);}\n    return res;\n}`,
   },
 ];
+
+/* ─────────────────────────────────────────────────
+   PROBLEM SOLUTIONS LIBRARY
+───────────────────────────────────────────────── */
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+let solutionCatalog = LC_PROBLEMS_DB;
+let solutionPage = 0;
+let solutionCatalogLoading = false;
+let solutionCatalogLoaded = false;
+const SOLUTIONS_PAGE_SIZE = 48;
+const PROBLEMSET_QUERY = `query { problemsetQuestionListV2(limit: 100, skip: SKIP, filters: { filterCombineType: ALL }) { questions { id questionFrontendId title titleSlug difficulty topicTags { name slug } } } }`;
+
+function renderSolutionsLibrary() {
+  filterSolutions();
+  if (!solutionCatalogLoaded && !solutionCatalogLoading) loadLeetCodeCatalog();
+}
+
+async function loadLeetCodeCatalog() {
+  solutionCatalogLoading = true;
+  const grid = document.getElementById("solutions-grid");
+  if (grid)
+    grid.innerHTML =
+      '<div class="empty-state solution-empty-state"><i class="fas fa-spinner fa-spin"></i><h3>Loading LeetCode catalog</h3><p>Fetching the complete problem list...</p></div>';
+  try {
+    const offsets = Array.from({ length: 41 }, (_, index) => index * 100);
+    const batches = await Promise.all(
+      offsets.map(async (skip) => {
+        const response = await fetch("https://leetcode.com/graphql", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            query: PROBLEMSET_QUERY.replace("SKIP", skip),
+          }),
+        });
+        if (!response.ok) throw new Error("Catalog request failed");
+        const json = await response.json();
+        return json.data?.problemsetQuestionListV2?.questions || [];
+      }),
+    );
+    const localBySlug = new Map(
+      LC_PROBLEMS_DB.map((problem) => [problem.slug, problem]),
+    );
+    solutionCatalog = batches.flat().map((problem) => ({
+      ...(localBySlug.get(problem.titleSlug) || {}),
+      id: Number(problem.id || problem.questionFrontendId),
+      title: problem.title,
+      slug: problem.titleSlug,
+      difficulty:
+        problem.difficulty.charAt(0) +
+        problem.difficulty.slice(1).toLowerCase(),
+      topic: problem.topicTags?.[0]?.name || "Algorithms",
+      platform: "leetcode",
+      desc:
+        localBySlug.get(problem.titleSlug)?.desc ||
+        "Open this problem to read the full statement and available solution code.",
+    }));
+    solutionCatalogLoaded = true;
+    solutionPage = 0;
+    filterSolutions();
+  } catch {
+    solutionCatalog = LC_PROBLEMS_DB;
+    solutionCatalogLoaded = true;
+    solutionPage = 0;
+    filterSolutions();
+    showToast("Live catalog unavailable; showing saved problems", "warn");
+  } finally {
+    solutionCatalogLoading = false;
+  }
+}
+
+function filterSolutions() {
+  const query = (document.getElementById("solSearch")?.value || "")
+    .trim()
+    .toLowerCase();
+  const platform = document.getElementById("solPlatform")?.value || "all";
+  const difficulty = document.getElementById("solDifficulty")?.value || "all";
+  const topic = document.getElementById("solTopic")?.value || "all";
+  const filteredProblems = solutionCatalog.filter((problem) => {
+    const matchesQuery =
+      !query ||
+      [problem.title, problem.desc, problem.topic, problem.slug].some((value) =>
+        String(value).toLowerCase().includes(query),
+      );
+    return (
+      matchesQuery &&
+      (platform === "all" || problem.platform === platform) &&
+      (difficulty === "all" || problem.difficulty === difficulty) &&
+      (topic === "all" || problem.topic === topic)
+    );
+  });
+
+  const pageCount = Math.max(
+    1,
+    Math.ceil(filteredProblems.length / SOLUTIONS_PAGE_SIZE),
+  );
+  solutionPage = Math.min(solutionPage, pageCount - 1);
+  const problems = filteredProblems.slice(
+    solutionPage * SOLUTIONS_PAGE_SIZE,
+    (solutionPage + 1) * SOLUTIONS_PAGE_SIZE,
+  );
+  const count = document.getElementById("sol-count");
+  if (count)
+    count.textContent = `${filteredProblems.length} problem${filteredProblems.length === 1 ? "" : "s"}`;
+  const grid = document.getElementById("solutions-grid");
+  if (!grid) return;
+  grid.innerHTML = problems.length
+    ? problems
+        .map(
+          (problem) => `
+    <article class="solution-card">
+      <div class="solution-card-meta">
+        <span class="solution-number">#${problem.id}</span>
+        <span class="tag ${problem.difficulty.toLowerCase()}-tag">${escapeHtml(problem.difficulty)}</span>
+        <span class="topic-tag">${escapeHtml(problem.topic)}</span>
+      </div>
+      <h3>${escapeHtml(problem.title)}</h3>
+      <p>${escapeHtml(problem.desc)}</p>
+      <div class="solution-card-footer">
+        <span><i class="fas fa-code"></i> Question · Answer</span>
+        <button class="btn btn-outline btn-sm" onclick="openSolutionModal(${problem.id})">Solve <i class="fas fa-arrow-right"></i></button>
+      </div>
+    </article>`,
+        )
+        .join("")
+    : `
+    <div class="empty-state solution-empty-state">
+      <i class="fas fa-search"></i><h3>No problems found</h3><p>Try a different title, topic, or difficulty.</p>
+    </div>`;
+  const pagination = document.getElementById("solutions-pagination");
+  if (pagination)
+    pagination.innerHTML =
+      pageCount > 1
+        ? `<button class="btn btn-outline btn-sm" ${solutionPage === 0 ? "disabled" : ""} onclick="changeSolutionPage(-1)"><i class="fas fa-chevron-left"></i> Previous</button><span>Page ${solutionPage + 1} of ${pageCount}</span><button class="btn btn-outline btn-sm" ${solutionPage === pageCount - 1 ? "disabled" : ""} onclick="changeSolutionPage(1)">Next <i class="fas fa-chevron-right"></i></button>`
+        : "";
+}
+
+function changeSolutionPage(direction) {
+  solutionPage += direction;
+  filterSolutions();
+  document
+    .getElementById("tab-solutions")
+    ?.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function buildStepByStepExplanation(problem) {
+  const topic = problem?.topic || "Algorithms";
+  const common = [
+    "Read the problem carefully and identify the key pattern to solve it efficiently.",
+    "Choose the right data structure or scanning strategy to reduce unnecessary work.",
+    "Update the answer as you process the input and return the final result after the full pass.",
+  ];
+
+  const topicSteps = {
+    Array: [
+      "Scan the array once and track the values, indices, or running totals that directly relate to the target condition.",
+      "Use a map, pointer, or prefix technique to avoid repeated searches and keep the solution efficient.",
+      "After the full pass, return the computed result and verify it against the problem constraints.",
+    ],
+    String: [
+      "Break the string into characters or groups and identify the part that repeats or needs matching.",
+      "Use a sliding window, set, or stack to keep only the relevant characters in view.",
+      "When the condition fails, adjust the window or pointer and continue until the best answer is found.",
+    ],
+    "Linked List": [
+      "Walk through the linked list step by step while keeping track of the important pointers.",
+      "Reconnect nodes carefully, using a dummy node or a previous pointer when necessary to preserve the structure.",
+      "Once all nodes are processed, return the updated head and confirm the list order is correct.",
+    ],
+    "Binary Search": [
+      "Define the search range and decide exactly what the midpoint represents in the problem.",
+      "Move the left or right boundary based on whether the midpoint condition is valid or invalid.",
+      "Continue shrinking the range until you isolate the exact answer or the correct partition.",
+    ],
+    "Dynamic Programming": [
+      "Define the subproblem that can be solved independently and use it to build the final answer.",
+      "Store the best result for the current state so later states can reuse it without recomputation.",
+      "Finish by combining the computed states to produce the optimal overall result.",
+    ],
+    Stack: [
+      "Push opening or pending values onto the stack so the next matching value can be checked quickly.",
+      "On each new symbol, verify whether it closes the most recent open one and discard it when valid.",
+      "If the stack is left with unmatched items at the end, the expression is invalid.",
+    ],
+    Graph: [
+      "Start from each unvisited node or cell and visit all reachable neighbors in the connected component.",
+      "Mark visited nodes immediately so each region is counted only once.",
+      "Count the groups found and return the total number of connected components or islands.",
+    ],
+    Backtracking: [
+      "Place one piece at a time and check whether it violates the current constraints.",
+      "If the placement is valid, recurse deeper; if it conflicts, undo the move and try another option.",
+      "When all rows or positions are filled, record the valid configuration and continue exploring alternatives.",
+    ],
+    Heap: [
+      "Insert values into a priority queue to always keep the smallest or largest item ready.",
+      "Remove the top element when it is no longer useful and push the next candidate into place.",
+      "Repeat until the required number of elements has been processed, then return the final answer.",
+    ],
+  };
+
+  const steps = topicSteps[topic] || common;
+  return `
+    <p><strong>Goal:</strong> ${problem?.desc || "Solve the problem efficiently and correctly."}</p>
+    <ol class="step-list">
+      ${steps
+        .map(
+          (step, index) =>
+            `<li><strong>Step ${index + 1}:</strong> ${step}</li>`,
+        )
+        .join("")}
+    </ol>
+  `;
+}
+
+function openSolutionModal(problemId) {
+  const problem = solutionCatalog.find((item) => item.id === problemId);
+  const modal = document.getElementById("solutionModal");
+  if (!problem || !modal) return;
+  setText("modal-diff-badge", problem.difficulty);
+  setText("modal-title", `#${problem.id}. ${problem.title}`);
+  setText("modal-desc", problem.desc);
+  setApproachHtml("modal-approach-text", problem);
+  setText("modal-complexity", problem.complexity);
+  setText("modal-code-python", problem.python || "Solution not available.");
+  setText("modal-code-java", problem.java || "Solution not available.");
+  setText("modal-code-cpp", problem.cpp || "Solution not available.");
+  setText("modal-code-js", problem.js || "Solution not available.");
+  setAttr(
+    "modal-lc-link",
+    "href",
+    `https://leetcode.com/problems/${problem.slug}/`,
+  );
+  modal.classList.add("open");
+  switchModalTab(document.querySelector(".modal-tab"), "approach");
+  if (!problem.approach || typeof problem.approach === "string") {
+    const questionText = document.getElementById("modal-approach-text");
+    if (questionText && !questionText.innerHTML.trim()) {
+      questionText.innerHTML =
+        "Loading the full LeetCode question statement...";
+    }
+  }
+  if (
+    !problem.approach ||
+    /Loading the full LeetCode question statement/i.test(problem.approach || "")
+  ) {
+    loadProblemDetails(problem);
+  }
+}
+
+async function loadProblemDetails(problem) {
+  try {
+    const query = `query($titleSlug:String!) { question(titleSlug:$titleSlug) { content codeSnippets { langSlug code } } }`;
+    const response = await fetch("https://leetcode.com/graphql", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ query, variables: { titleSlug: problem.slug } }),
+    });
+    const question = (await response.json()).data?.question;
+    if (!question) throw new Error("Question unavailable");
+    const content = question.content || "Question statement unavailable.";
+    const approach = document.getElementById("modal-approach-text");
+    if (approach) approach.innerHTML = sanitizeQuestionHtml(content);
+    const snippets = Object.fromEntries(
+      (question.codeSnippets || []).map((snippet) => [
+        snippet.langSlug,
+        snippet.code,
+      ]),
+    );
+    setText(
+      "modal-code-python",
+      problem.python ||
+        snippets.python3 ||
+        snippets.python ||
+        "Solution code unavailable.",
+    );
+    setText(
+      "modal-code-java",
+      problem.java || snippets.java || "Solution code unavailable.",
+    );
+    setText(
+      "modal-code-cpp",
+      problem.cpp || snippets.cpp || "Solution code unavailable.",
+    );
+    setText(
+      "modal-code-js",
+      problem.js || snippets.javascript || "Solution code unavailable.",
+    );
+  } catch {
+    setText(
+      "modal-approach-text",
+      "The question could not be loaded. Open the official LeetCode page for the complete statement and answer.",
+    );
+  }
+}
+
+function sanitizeQuestionHtml(html) {
+  const template = document.createElement("template");
+  template.innerHTML = html;
+  template.content
+    .querySelectorAll("script, style, iframe, object, embed")
+    .forEach((element) => element.remove());
+  template.content.querySelectorAll("*").forEach((element) =>
+    [...element.attributes].forEach((attribute) => {
+      if (
+        attribute.name.toLowerCase().startsWith("on") ||
+        (attribute.name === "href" &&
+          attribute.value.toLowerCase().startsWith("javascript:"))
+      )
+        element.removeAttribute(attribute.name);
+    }),
+  );
+  return template.innerHTML;
+}
+
+function closeModal() {
+  document.getElementById("solutionModal")?.classList.remove("open");
+}
+
+function switchModalTab(button, panelName) {
+  document
+    .querySelectorAll(".modal-tab")
+    .forEach((tab) => tab.classList.remove("active"));
+  document
+    .querySelectorAll(".modal-panel")
+    .forEach((panel) => panel.classList.remove("active"));
+  button?.classList.add("active");
+  document.getElementById(`modal-${panelName}`)?.classList.add("active");
+}
+
+async function copyCode(elementId) {
+  const code = document.getElementById(elementId)?.textContent || "";
+  try {
+    await navigator.clipboard.writeText(code);
+    showToast("Solution copied", "success");
+  } catch {
+    showToast("Copy is unavailable in this browser", "warn");
+  }
+}

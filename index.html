@@ -1,266 +1,430 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>EDU TECH – Learn. Code. Grow.</title>
-  <link rel="stylesheet" href="css/styles.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
-</head>
-<body class="landing-page">
-
-  <!-- ───── NAVBAR ───── -->
-  <nav class="navbar" id="navbar">
-    <div class="nav-container">
-      <div class="nav-logo">
-        <div class="logo-icon"><i class="fas fa-graduation-cap"></i></div>
-        <span class="logo-text">EDU<span class="accent">TECH</span></span>
-      </div>
-      <ul class="nav-links">
-        <li><a href="#home">Home</a></li>
-        <li><a href="#features">Features</a></li>
-        <li><a href="#platforms">Platforms</a></li>
-        <li><a href="#about">About</a></li>
-      </ul>
-      <div class="nav-actions">
-        <a href="dashboard.html" class="btn btn-primary">
-          <i class="fas fa-th-large"></i> Dashboard
-        </a>
-      </div>
-      <button class="hamburger" id="hamburger">
-        <span></span><span></span><span></span>
-      </button>
-    </div>
-  </nav>
-
-  <!-- ───── HERO ───── -->
-  <section class="hero" id="home">
-    <div class="hero-bg">
-      <div class="hero-orb orb1"></div>
-      <div class="hero-orb orb2"></div>
-      <div class="hero-orb orb3"></div>
-      <div class="grid-overlay"></div>
-    </div>
-    <div class="hero-content">
-      <div class="hero-badge">
-        <i class="fas fa-bolt"></i> All-in-One Learning Platform
-      </div>
-      <h1 class="hero-title">
-        Master Coding with<br />
-        <span class="gradient-text">EDU TECH</span>
-      </h1>
-      <p class="hero-subtitle">
-        Track your LeetCode progress, GitHub contributions, GeeksForGeeks scores
-        and daily learning streaks — all from one powerful dashboard.
-      </p>
-      <div class="hero-actions">
-        <a href="dashboard.html" class="btn btn-primary btn-large">
-          <i class="fas fa-rocket"></i> Launch Dashboard
-        </a>
-        <a href="#features" class="btn btn-outline btn-large">
-          <i class="fas fa-play-circle"></i> See Features
-        </a>
-      </div>
-      <div class="hero-stats">
-        <div class="stat-pill"><span class="stat-num">50K+</span> Students</div>
-        <div class="stat-pill"><span class="stat-num">3</span> Platforms</div>
-        <div class="stat-pill"><span class="stat-num">100%</span> Free</div>
-      </div>
-    </div>
-    <div class="hero-visual">
-      <div class="floating-card card-lc">
-        <img src="https://leetcode.com/favicon.ico" onerror="this.style.display='none'" alt="" />
-        <div>
-          <div class="fc-title">LeetCode</div>
-          <div class="fc-val">342 Solved</div>
-        </div>
-      </div>
-      <div class="floating-card card-gh">
-        <i class="fab fa-github"></i>
-        <div>
-          <div class="fc-title">GitHub</div>
-          <div class="fc-val">1.2K Commits</div>
-        </div>
-      </div>
-      <div class="floating-card card-gfg">
-        <i class="fas fa-code"></i>
-        <div>
-          <div class="fc-title">GFG</div>
-          <div class="fc-val">Score 1850</div>
-        </div>
-      </div>
-      <div class="dashboard-preview">
-        <div class="dp-header">
-          <div class="dp-dot red"></div>
-          <div class="dp-dot yellow"></div>
-          <div class="dp-dot green"></div>
-          <span>EDU TECH Dashboard</span>
-        </div>
-        <div class="dp-body">
-          <div class="dp-bar" style="width:85%;background:#f89f1b"></div>
-          <div class="dp-bar" style="width:65%;background:#6e5ce7"></div>
-          <div class="dp-bar" style="width:75%;background:#2ea44f"></div>
-          <div class="dp-chart">
-            <div class="dc-col" style="height:40%"></div>
-            <div class="dc-col" style="height:60%"></div>
-            <div class="dc-col" style="height:80%"></div>
-            <div class="dc-col" style="height:55%"></div>
-            <div class="dc-col" style="height:90%"></div>
-            <div class="dc-col" style="height:70%"></div>
-            <div class="dc-col" style="height:85%"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ───── FEATURES ───── -->
-  <section class="section" id="features">
-    <div class="section-header">
-      <div class="section-tag">What We Offer</div>
-      <h2>Everything You Need to <span class="gradient-text">Level Up</span></h2>
-      <p>One unified dashboard to track all your coding activities and daily progress.</p>
-    </div>
-    <div class="features-grid">
-      <div class="feature-card">
-        <div class="feature-icon lc-color"><i class="fas fa-code"></i></div>
-        <h3>LeetCode Tracker</h3>
-        <p>Monitor your problem-solving stats — easy, medium, hard breakdowns and streaks.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon gh-color"><i class="fab fa-github"></i></div>
-        <h3>GitHub Analytics</h3>
-        <p>View contribution graphs, repository stats, followers, and commit history.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon gfg-color"><i class="fas fa-laptop-code"></i></div>
-        <h3>GeeksForGeeks Stats</h3>
-        <p>Track your GFG coding score, institute rank, and article contributions.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon day-color"><i class="fas fa-chart-line"></i></div>
-        <h3>User of the Day</h3>
-        <p>Daily leaderboard highlighting the most active coder across all platforms.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon streak-color"><i class="fas fa-fire"></i></div>
-        <h3>Streak Tracker</h3>
-        <p>Keep your daily coding streak alive with reminders and milestone badges.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon rank-color"><i class="fas fa-trophy"></i></div>
-        <h3>Live Leaderboard</h3>
-        <p>Compete with peers and see where you stand on the daily rankings.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- ───── PLATFORMS ───── -->
-  <section class="section platforms-section" id="platforms">
-    <div class="section-header">
-      <div class="section-tag">Integrated Platforms</div>
-      <h2>Track Across <span class="gradient-text">Top Platforms</span></h2>
-    </div>
-    <div class="platforms-grid">
-      <div class="platform-card lc-card">
-        <div class="platform-logo"><i class="fas fa-code" style="color:#f89f1b;font-size:2.5rem"></i></div>
-        <h3>LeetCode</h3>
-        <p>The world's most popular coding interview platform with 3000+ problems.</p>
-        <a href="https://leetcode.com" target="_blank" class="platform-link">Visit LeetCode <i class="fas fa-arrow-right"></i></a>
-      </div>
-      <div class="platform-card gh-card">
-        <div class="platform-logo"><i class="fab fa-github" style="color:#e6edf3;font-size:2.5rem"></i></div>
-        <h3>GitHub</h3>
-        <p>Host code, collaborate on projects, and showcase your open-source work.</p>
-        <a href="https://github.com" target="_blank" class="platform-link">Visit GitHub <i class="fas fa-arrow-right"></i></a>
-      </div>
-      <div class="platform-card gfg-card">
-        <div class="platform-logo"><i class="fas fa-laptop-code" style="color:#2f8d46;font-size:2.5rem"></i></div>
-        <h3>GeeksForGeeks</h3>
-        <p>CS portal with articles, courses, and a large competitive coding community.</p>
-        <a href="https://geeksforgeeks.org" target="_blank" class="platform-link">Visit GFG <i class="fas fa-arrow-right"></i></a>
-      </div>
-    </div>
-  </section>
-
-  <!-- ───── ABOUT ───── -->
-  <section class="section about-section" id="about">
-    <div class="about-content">
-      <div class="about-text">
-        <div class="section-tag">About EDU TECH</div>
-        <h2>Built for <span class="gradient-text">Coders</span>, by Coders</h2>
-        <p>EDU TECH is a free platform designed to help students and developers track their progress across the most important coding platforms. Stop switching between tabs — see everything in one place.</p>
-        <ul class="about-list">
-          <li><i class="fas fa-check-circle"></i> Real-time stats from LeetCode, GitHub & GFG</li>
-          <li><i class="fas fa-check-circle"></i> Daily User of the Day recognition</li>
-          <li><i class="fas fa-check-circle"></i> Beautiful, distraction-free dashboard</li>
-          <li><i class="fas fa-check-circle"></i> 100% free, no account required</li>
-        </ul>
-        <a href="dashboard.html" class="btn btn-primary btn-large">
-          <i class="fas fa-th-large"></i> Open Dashboard
-        </a>
-      </div>
-      <div class="about-visual">
-        <div class="av-card">
-          <i class="fas fa-award" style="color:#f89f1b;font-size:3rem"></i>
-          <h3>User of the Day</h3>
-          <div class="av-user">
-            <div class="av-avatar">A</div>
-            <div>
-              <div class="av-name">Alex Johnson</div>
-              <div class="av-score">Score: 2450 pts today</div>
-            </div>
-          </div>
-          <div class="av-platforms">
-            <span class="ap-badge lc">LC: 12 solved</span>
-            <span class="ap-badge gh">GH: 8 commits</span>
-            <span class="ap-badge gfg">GFG: 5 articles</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ───── FOOTER ───── -->
-  <footer class="footer">
-    <div class="footer-content">
-      <div class="footer-brand">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EDU TECH – Learn. Code. Grow.</title>
+    <link rel="stylesheet" href="css/styles.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="landing-page">
+    <!-- ───── NAVBAR ───── -->
+    <nav class="navbar" id="navbar">
+      <div class="nav-container">
         <div class="nav-logo">
           <div class="logo-icon"><i class="fas fa-graduation-cap"></i></div>
           <span class="logo-text">EDU<span class="accent">TECH</span></span>
         </div>
-        <p>Your all-in-one coding progress tracker.</p>
-      </div>
-      <div class="footer-links">
-        <div class="fl-col">
-          <h4>Platforms</h4>
-          <a href="https://leetcode.com" target="_blank">LeetCode</a>
-          <a href="https://github.com" target="_blank">GitHub</a>
-          <a href="https://geeksforgeeks.org" target="_blank">GeeksForGeeks</a>
+        <ul class="nav-links">
+          <li><a href="#home">Home</a></li>
+          <li><a href="#features">Features</a></li>
+          <li><a href="#platforms">Platforms</a></li>
+          <li><a href="#about">About</a></li>
+        </ul>
+        <div class="nav-actions">
+          <a href="dashboard.html" class="btn btn-primary">
+            <i class="fas fa-th-large"></i> Dashboard
+          </a>
         </div>
-        <div class="fl-col">
-          <h4>Navigate</h4>
-          <a href="#home">Home</a>
-          <a href="#features">Features</a>
-          <a href="dashboard.html">Dashboard</a>
-        </div>
+        <button class="hamburger" id="hamburger">
+          <span></span><span></span><span></span>
+        </button>
       </div>
-    </div>
-    <div class="footer-bottom">
-      <p>&copy; 2026 EDU TECH. Built with <i class="fas fa-heart" style="color:#e25555"></i> for coders.</p>
-    </div>
-  </footer>
+    </nav>
 
-  <script>
-    // Navbar scroll effect
-    window.addEventListener('scroll', () => {
-      document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 50);
-    });
-    // Hamburger menu
-    document.getElementById('hamburger').addEventListener('click', () => {
-      document.querySelector('.nav-links').classList.toggle('open');
-    });
-  </script>
-</body>
+    <!-- ───── HERO ───── -->
+    <section class="hero" id="home">
+      <div class="hero-bg">
+        <div class="hero-orb orb1"></div>
+        <div class="hero-orb orb2"></div>
+        <div class="hero-orb orb3"></div>
+        <div class="grid-overlay"></div>
+      </div>
+      <div class="hero-content">
+        <div class="hero-badge">
+          <i class="fas fa-bolt"></i> All-in-One Learning Platform
+        </div>
+        <h1 class="hero-title">
+          Master Coding with<br />
+          <span class="gradient-text">EDU TECH</span>
+        </h1>
+        <p class="hero-subtitle">
+          Track your LeetCode progress, GitHub contributions, GeeksForGeeks
+          scores and daily learning streaks — all from one powerful dashboard.
+        </p>
+        <div class="hero-actions">
+          <a href="dashboard.html" class="btn btn-primary btn-large">
+            <i class="fas fa-rocket"></i> Launch Dashboard
+          </a>
+          <a href="#features" class="btn btn-outline btn-large">
+            <i class="fas fa-play-circle"></i> See Features
+          </a>
+        </div>
+        <div class="hero-stats">
+          <div class="stat-pill">
+            <span class="stat-num">50K+</span> Students
+          </div>
+          <div class="stat-pill"><span class="stat-num">3</span> Platforms</div>
+          <div class="stat-pill"><span class="stat-num">100%</span> Free</div>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="floating-card card-lc">
+          <img
+            src="https://leetcode.com/favicon.ico"
+            onerror="this.style.display = 'none'"
+            alt=""
+          />
+          <div>
+            <div class="fc-title">LeetCode</div>
+            <div class="fc-val">342 Solved</div>
+          </div>
+        </div>
+        <div class="floating-card card-gh">
+          <i class="fab fa-github"></i>
+          <div>
+            <div class="fc-title">GitHub</div>
+            <div class="fc-val">1.2K Commits</div>
+          </div>
+        </div>
+        <div class="floating-card card-gfg">
+          <i class="fas fa-code"></i>
+          <div>
+            <div class="fc-title">GFG</div>
+            <div class="fc-val">Score 1850</div>
+          </div>
+        </div>
+        <div class="dashboard-preview">
+          <div class="dp-header">
+            <div class="dp-dot red"></div>
+            <div class="dp-dot yellow"></div>
+            <div class="dp-dot green"></div>
+            <span>EDU TECH Dashboard</span>
+          </div>
+          <div class="dp-body">
+            <div class="dp-bar" style="width: 85%; background: #f89f1b"></div>
+            <div class="dp-bar" style="width: 65%; background: #6e5ce7"></div>
+            <div class="dp-bar" style="width: 75%; background: #2ea44f"></div>
+            <div class="dp-chart">
+              <div class="dc-col" style="height: 40%"></div>
+              <div class="dc-col" style="height: 60%"></div>
+              <div class="dc-col" style="height: 80%"></div>
+              <div class="dc-col" style="height: 55%"></div>
+              <div class="dc-col" style="height: 90%"></div>
+              <div class="dc-col" style="height: 70%"></div>
+              <div class="dc-col" style="height: 85%"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ───── QUICK HIGHLIGHTS ───── -->
+    <section class="section quick-metrics">
+      <div class="metrics-grid">
+        <div class="metric-box">
+          <span class="metric-icon"><i class="fas fa-chart-line"></i></span>
+          <div>
+            <h3>Daily Insights</h3>
+            <p>Track your coding momentum without switching tabs.</p>
+          </div>
+        </div>
+        <div class="metric-box">
+          <span class="metric-icon"><i class="fas fa-book-open"></i></span>
+          <div>
+            <h3>Step-by-Step Solutions</h3>
+            <p>
+              Learn problem patterns with smarter explanations and examples.
+            </p>
+          </div>
+        </div>
+        <div class="metric-box">
+          <span class="metric-icon"><i class="fas fa-users"></i></span>
+          <div>
+            <h3>Community Motivation</h3>
+            <p>See rankings, streaks, and progress that keep you moving.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ───── FEATURES ───── -->
+    <section class="section" id="features">
+      <div class="section-header">
+        <div class="section-tag">What We Offer</div>
+        <h2>
+          Everything You Need to <span class="gradient-text">Level Up</span>
+        </h2>
+        <p>
+          One unified dashboard to track all your coding activities and daily
+          progress.
+        </p>
+      </div>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon lc-color"><i class="fas fa-code"></i></div>
+          <h3>LeetCode Tracker</h3>
+          <p>
+            Monitor your problem-solving stats — easy, medium, hard breakdowns
+            and streaks.
+          </p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon gh-color"><i class="fab fa-github"></i></div>
+          <h3>GitHub Analytics</h3>
+          <p>
+            View contribution graphs, repository stats, followers, and commit
+            history.
+          </p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon gfg-color">
+            <i class="fas fa-laptop-code"></i>
+          </div>
+          <h3>GeeksForGeeks Stats</h3>
+          <p>
+            Track your GFG coding score, institute rank, and article
+            contributions.
+          </p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon day-color">
+            <i class="fas fa-chart-line"></i>
+          </div>
+          <h3>User of the Day</h3>
+          <p>
+            Daily leaderboard highlighting the most active coder across all
+            platforms.
+          </p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon streak-color">
+            <i class="fas fa-fire"></i>
+          </div>
+          <h3>Streak Tracker</h3>
+          <p>
+            Keep your daily coding streak alive with reminders and milestone
+            badges.
+          </p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon rank-color">
+            <i class="fas fa-trophy"></i>
+          </div>
+          <h3>Live Leaderboard</h3>
+          <p>
+            Compete with peers and see where you stand on the daily rankings.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ───── HOW IT WORKS ───── -->
+    <section class="section feature-highlight">
+      <div class="section-header">
+        <div class="section-tag">How It Works</div>
+        <h2>
+          Turn your progress into a
+          <span class="gradient-text">daily habit</span>
+        </h2>
+      </div>
+      <div class="process-grid">
+        <div class="process-card">
+          <div class="process-number">01</div>
+          <h3>Connect Your Profiles</h3>
+          <p>
+            Paste your LeetCode, GitHub, and GFG links to bring all of your work
+            into one focused dashboard.
+          </p>
+        </div>
+        <div class="process-card">
+          <div class="process-number">02</div>
+          <h3>Track Your Growth</h3>
+          <p>
+            Review streaks, activity patterns, solved problems, and contribution
+            momentum in real time.
+          </p>
+        </div>
+        <div class="process-card">
+          <div class="process-number">03</div>
+          <h3>Stay Motivated</h3>
+          <p>
+            Compare performance, unlock daily wins, and keep improving with a
+            cleaner learning system.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ───── PLATFORMS ───── -->
+    <section class="section platforms-section" id="platforms">
+      <div class="section-header">
+        <div class="section-tag">Integrated Platforms</div>
+        <h2>Track Across <span class="gradient-text">Top Platforms</span></h2>
+      </div>
+      <div class="platforms-grid">
+        <div class="platform-card lc-card">
+          <div class="platform-logo">
+            <i
+              class="fas fa-code"
+              style="color: #f89f1b; font-size: 2.5rem"
+            ></i>
+          </div>
+          <h3>LeetCode</h3>
+          <p>
+            The world's most popular coding interview platform with 3000+
+            problems.
+          </p>
+          <a href="https://leetcode.com" target="_blank" class="platform-link"
+            >Visit LeetCode <i class="fas fa-arrow-right"></i
+          ></a>
+        </div>
+        <div class="platform-card gh-card">
+          <div class="platform-logo">
+            <i
+              class="fab fa-github"
+              style="color: #e6edf3; font-size: 2.5rem"
+            ></i>
+          </div>
+          <h3>GitHub</h3>
+          <p>
+            Host code, collaborate on projects, and showcase your open-source
+            work.
+          </p>
+          <a href="https://github.com" target="_blank" class="platform-link"
+            >Visit GitHub <i class="fas fa-arrow-right"></i
+          ></a>
+        </div>
+        <div class="platform-card gfg-card">
+          <div class="platform-logo">
+            <i
+              class="fas fa-laptop-code"
+              style="color: #2f8d46; font-size: 2.5rem"
+            ></i>
+          </div>
+          <h3>GeeksForGeeks</h3>
+          <p>
+            CS portal with articles, courses, and a large competitive coding
+            community.
+          </p>
+          <a
+            href="https://geeksforgeeks.org"
+            target="_blank"
+            class="platform-link"
+            >Visit GFG <i class="fas fa-arrow-right"></i
+          ></a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ───── ABOUT ───── -->
+    <section class="section about-section" id="about">
+      <div class="about-content">
+        <div class="about-text">
+          <div class="section-tag">About EDU TECH</div>
+          <h2>
+            Built for <span class="gradient-text">Coders</span>, by Coders
+          </h2>
+          <p>
+            EDU TECH is a free platform designed to help students and developers
+            track their progress across the most important coding platforms.
+            Stop switching between tabs — see everything in one place.
+          </p>
+          <ul class="about-list">
+            <li>
+              <i class="fas fa-check-circle"></i> Real-time stats from LeetCode,
+              GitHub & GFG
+            </li>
+            <li>
+              <i class="fas fa-check-circle"></i> Daily User of the Day
+              recognition
+            </li>
+            <li>
+              <i class="fas fa-check-circle"></i> Beautiful, distraction-free
+              dashboard
+            </li>
+            <li>
+              <i class="fas fa-check-circle"></i> 100% free, no account required
+            </li>
+          </ul>
+          <a href="dashboard.html" class="btn btn-primary btn-large">
+            <i class="fas fa-th-large"></i> Open Dashboard
+          </a>
+        </div>
+        <div class="about-visual">
+          <div class="av-card">
+            <i class="fas fa-award" style="color: #f89f1b; font-size: 3rem"></i>
+            <h3>User of the Day</h3>
+            <div class="av-user">
+              <div class="av-avatar">A</div>
+              <div>
+                <div class="av-name">Aarav Sharma</div>
+                <div class="av-score">Score: 2450 pts today</div>
+              </div>
+            </div>
+            <div class="av-platforms">
+              <span class="ap-badge lc">LC: 12 solved</span>
+              <span class="ap-badge gh">GH: 8 commits</span>
+              <span class="ap-badge gfg">GFG: 5 articles</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ───── FOOTER ───── -->
+    <footer class="footer">
+      <div class="footer-content">
+        <div class="footer-brand">
+          <div class="nav-logo">
+            <div class="logo-icon"><i class="fas fa-graduation-cap"></i></div>
+            <span class="logo-text">EDU<span class="accent">TECH</span></span>
+          </div>
+          <p>Your all-in-one coding progress tracker.</p>
+        </div>
+        <div class="footer-links">
+          <div class="fl-col">
+            <h4>Platforms</h4>
+            <a href="https://leetcode.com" target="_blank">LeetCode</a>
+            <a href="https://github.com" target="_blank">GitHub</a>
+            <a href="https://geeksforgeeks.org" target="_blank"
+              >GeeksForGeeks</a
+            >
+          </div>
+          <div class="fl-col">
+            <h4>Navigate</h4>
+            <a href="#home">Home</a>
+            <a href="#features">Features</a>
+            <a href="dashboard.html">Dashboard</a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>
+          &copy; 2026 EDU TECH. Built with
+          <i class="fas fa-heart" style="color: #e25555"></i> for coders.
+        </p>
+      </div>
+    </footer>
+
+    <script>
+      // Navbar scroll effect
+      window.addEventListener("scroll", () => {
+        document
+          .getElementById("navbar")
+          .classList.toggle("scrolled", window.scrollY > 50);
+      });
+      // Hamburger menu
+      document.getElementById("hamburger").addEventListener("click", () => {
+        document.querySelector(".nav-links").classList.toggle("open");
+      });
+    </script>
+  </body>
 </html>
