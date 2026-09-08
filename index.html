@@ -3,14 +3,17 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>EDU TECH – Learn. Code. Grow.</title>
+    <title>EDU TECH | Your coding progress, in one place</title>
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+    <link rel="apple-touch-icon" href="assets/favicon.svg" />
+    <link rel="manifest" href="site.webmanifest" />
     <link rel="stylesheet" href="css/styles.css" />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
     />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap"
       rel="stylesheet"
     />
   </head>
@@ -22,7 +25,7 @@
           <div class="logo-icon"><i class="fas fa-graduation-cap"></i></div>
           <span class="logo-text">EDU<span class="accent">TECH</span></span>
         </div>
-        <ul class="nav-links">
+        <ul class="nav-links" id="site-navigation">
           <li><a href="#home">Home</a></li>
           <li><a href="#features">Features</a></li>
           <li><a href="#platforms">Platforms</a></li>
@@ -33,7 +36,13 @@
             <i class="fas fa-th-large"></i> Dashboard
           </a>
         </div>
-        <button class="hamburger" id="hamburger">
+        <button
+          class="hamburger"
+          id="hamburger"
+          aria-label="Open navigation menu"
+          aria-expanded="false"
+          aria-controls="site-navigation"
+        >
           <span></span><span></span><span></span>
         </button>
       </div>
@@ -52,12 +61,12 @@
           <i class="fas fa-bolt"></i> All-in-One Learning Platform
         </div>
         <h1 class="hero-title">
-          Master Coding with<br />
-          <span class="gradient-text">EDU TECH</span>
+          Make your coding<br />
+          <span class="gradient-text">progress visible.</span>
         </h1>
         <p class="hero-subtitle">
-          Track your LeetCode progress, GitHub contributions, GeeksForGeeks
-          scores and daily learning streaks — all from one powerful dashboard.
+          Bring LeetCode, GitHub, and GeeksForGeeks into one calm workspace so
+          every solved problem and small daily win has somewhere to land.
         </p>
         <div class="hero-actions">
           <a href="dashboard.html" class="btn btn-primary btn-large">
@@ -84,21 +93,21 @@
           />
           <div>
             <div class="fc-title">LeetCode</div>
-            <div class="fc-val">342 Solved</div>
+            <div class="fc-val">Live stats</div>
           </div>
         </div>
         <div class="floating-card card-gh">
           <i class="fab fa-github"></i>
           <div>
             <div class="fc-title">GitHub</div>
-            <div class="fc-val">1.2K Commits</div>
+            <div class="fc-val">Activity pulse</div>
           </div>
         </div>
         <div class="floating-card card-gfg">
           <i class="fas fa-code"></i>
           <div>
             <div class="fc-title">GFG</div>
-            <div class="fc-val">Score 1850</div>
+            <div class="fc-val">Keep learning</div>
           </div>
         </div>
         <div class="dashboard-preview">
@@ -421,9 +430,30 @@
           .getElementById("navbar")
           .classList.toggle("scrolled", window.scrollY > 50);
       });
-      // Hamburger menu
-      document.getElementById("hamburger").addEventListener("click", () => {
-        document.querySelector(".nav-links").classList.toggle("open");
+      // Mobile navigation
+      const hamburger = document.getElementById("hamburger");
+      const navigation = document.getElementById("site-navigation");
+      const closeNavigation = () => {
+        navigation.classList.remove("open");
+        hamburger.setAttribute("aria-expanded", "false");
+        hamburger.setAttribute("aria-label", "Open navigation menu");
+      };
+      hamburger.addEventListener("click", () => {
+        const isOpen = navigation.classList.toggle("open");
+        hamburger.setAttribute("aria-expanded", String(isOpen));
+        hamburger.setAttribute(
+          "aria-label",
+          isOpen ? "Close navigation menu" : "Open navigation menu",
+        );
+      });
+      navigation.querySelectorAll("a").forEach((link) => {
+        link.addEventListener("click", closeNavigation);
+      });
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") closeNavigation();
+      });
+      document.addEventListener("click", (event) => {
+        if (!event.target.closest(".nav-container")) closeNavigation();
       });
     </script>
   </body>

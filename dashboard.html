@@ -3,14 +3,17 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>EDU TECH – Dashboard</title>
+    <title>EDU TECH | Coding Progress Dashboard</title>
+    <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+    <link rel="apple-touch-icon" href="assets/favicon.svg" />
+    <link rel="manifest" href="site.webmanifest" />
     <link rel="stylesheet" href="css/styles.css" />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
     />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap"
       rel="stylesheet"
     />
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -714,6 +717,16 @@
                 <h3 id="gh-name">—</h3>
                 <div class="gh-handle" id="gh-login">—</div>
                 <p id="gh-bio" class="gh-bio">—</p>
+                <p id="gh-last-synced" class="uic-hint">Not synced</p>
+                <a
+                  id="gh-profile-link"
+                  class="btn btn-outline btn-sm"
+                  href="https://github.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <i class="fab fa-github"></i> Open profile
+                </a>
                 <div class="pp-meta">
                   <span
                     ><i class="fas fa-map-marker-alt"></i>
@@ -750,7 +763,7 @@
                 <i class="fas fa-code-branch" style="color: #6e5ce7"></i>
               </div>
               <div class="gsc-val" id="gh-commits">—</div>
-              <div class="gsc-label">Est. Commits</div>
+              <div class="gsc-label">Repo Size (KB)</div>
             </div>
             <div class="gh-stat-card">
               <div class="gsc-icon">
@@ -833,8 +846,7 @@
           >
             <div class="chart-header">
               <h3>
-                <i class="fas fa-fire"></i> Contribution Heatmap (Simulated —
-                Last 52 Weeks)
+                <i class="fas fa-fire"></i> Repository Updates (Last 52 Weeks)
               </h3>
             </div>
             <div class="heatmap-container" id="ghHeatmap"></div>

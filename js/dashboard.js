@@ -495,6 +495,19 @@ query getUserData($username: String!) {
   allQuestionsCount { difficulty count }
 }`;
 
+async function fetchLeetCodeFallback(username) {
+  const url = `${LC_STATS_FALLBACK}/${encodeURIComponent(username)}`;
+  for (let attempt = 0; attempt < 2; attempt += 1) {
+    const response = await fetch(url);
+    if (response.ok) return response.json();
+    if (response.status !== 429 && response.status < 500) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+    await new Promise((resolve) => setTimeout(resolve, 500 * (attempt + 1)));
+  }
+  throw new Error("LeetCode fallback service is temporarily unavailable");
+}
+
 async function fetchLeetCode() {
   const raw = document.getElementById("lcUrl")?.value.trim();
   if (!raw) {
@@ -508,13 +521,10 @@ async function fetchLeetCode() {
   showLoading(btn, "Analysing…");
 
   try {
-    const fallbackRes = await fetch(
-      `${LC_STATS_FALLBACK}/${encodeURIComponent(username)}`,
-    );
-    if (!fallbackRes.ok) throw new Error(`HTTP ${fallbackRes.status}`);
-    const fallbackData = await fallbackRes.json();
+    const fallbackData = await fetchLeetCodeFallback(username);
     populateLeetCodeFallback(fallbackData, username);
     showToast(`✅ LeetCode stats loaded for "${username}"`, "success");
+    hideLoading(btn);
     return;
   } catch {
     // Try LeetCode GraphQL only when the live stats service is unavailable.
@@ -946,34 +956,67 @@ async function fetchGitHub() {
   }
   const parsed = parseProfileUrl(raw);
   const username = parsed?.username || raw.trim();
+  const encodedUsername = encodeURIComponent(username);
   const btn = document.getElementById("ghFetchBtn");
   showLoading(btn, "Fetching…");
 
   try {
-    const [userRes, reposRes] = await Promise.all([
-      fetch(`https://api.github.com/users/${username}`),
-      fetch(
-        `https://api.github.com/users/${username}/repos?per_page=100&sort=updated`,
-      ),
-    ]);
-    if (!userRes.ok) throw new Error("User not found");
-    const [user, repos] = await Promise.all([userRes.json(), reposRes.json()]);
+    const userRes = await fetch(
+      `https://api.github.com/users/${encodedUsername}`,
+    );
+    if (!userRes.ok) {
+      if (userRes.status === 403)
+        throw new Error("GitHub API rate limit reached");
+      if (userRes.status === 404) throw new Error("GitHub user not found");
+      throw new Error(`GitHub API returned HTTP ${userRes.status}`);
+    }
+    const user = await userRes.json();
+    const repos = await fetchGitHubRepositories(encodedUsername);
     applyGitHubData(user, Array.isArray(repos) ? repos : []);
     showToast(`✅ GitHub profile loaded for "${username}"`, "success");
-  } catch (e) {
-    showToast(`Live GitHub data is unavailable for "${username}"`, "error");
+  } catch (error) {
+    showToast(
+      error.message || `Live GitHub data is unavailable for "${username}"`,
+      "error",
+    );
   } finally {
     hideLoading(btn);
   }
 }
 
+async function fetchGitHubRepositories(encodedUsername) {
+  const repositories = [];
+  for (let page = 1; page <= 3; page += 1) {
+    const response = await fetch(
+      `https://api.github.com/users/${encodedUsername}/repos?per_page=100&page=${page}&sort=updated&type=owner`,
+    );
+    if (!response.ok) {
+      if (response.status === 403)
+        throw new Error("GitHub API rate limit reached");
+      break;
+    }
+    const pageRepositories = await response.json();
+    if (!Array.isArray(pageRepositories) || pageRepositories.length === 0)
+      break;
+    repositories.push(...pageRepositories);
+    if (pageRepositories.length < 100) break;
+  }
+  return repositories;
+}
+
 function applyGitHubData(user, repos) {
   // Profile
   setAttr("gh-avatar", "src", user.avatar_url || "");
+  setAttr(
+    "gh-profile-link",
+    "href",
+    user.html_url || `https://github.com/${user.login}`,
+  );
   setText("gh-name", user.name || user.login);
   setText("gh-login", `@${user.login}`);
   setText("gh-bio", user.bio || "No bio available.");
   setText("gh-location", user.location || "—");
+  setText("gh-last-synced", `Synced ${new Date().toLocaleTimeString()}`);
   setText("gh-followers", (user.followers || 0).toLocaleString());
   setText("gh-following", (user.following || 0).toLocaleString());
   setText("gh-repos", (user.public_repos || 0).toLocaleString());
@@ -982,14 +1025,11 @@ function applyGitHubData(user, repos) {
   const totalStars = repos.reduce((a, r) => a + (r.stargazers_count || 0), 0);
   const totalForks = repos.reduce((a, r) => a + (r.forks_count || 0), 0);
   const totalIssues = repos.reduce((a, r) => a + (r.open_issues_count || 0), 0);
-  const estCommits = repos.reduce(
-    (a, r) => a + Math.max(1, Math.floor((r.size || 10) / 5)),
-    0,
-  );
+  const repoSize = repos.reduce((a, r) => a + (r.size || 0), 0);
 
   setText("gh-stars", totalStars.toLocaleString());
   setText("gh-total-stars", totalStars.toLocaleString());
-  setText("gh-commits", estCommits.toLocaleString());
+  setText("gh-commits", repoSize.toLocaleString());
   setText("gh-forks", totalForks.toLocaleString());
   setText("gh-issues", totalIssues.toLocaleString());
 
@@ -1049,7 +1089,7 @@ function applyGitHubData(user, repos) {
   show("gh-repos-card");
   hide("gh-empty-state");
 
-  buildGithubHeatmap();
+  buildGithubHeatmap(repos);
   renderGitHubCharts(repos);
   buildGHReposTable(repos);
 }
@@ -1080,17 +1120,26 @@ function applyGitHubMock(username) {
   applyGitHubData(mockUser, mockRepos);
 }
 
-function buildGithubHeatmap() {
+function buildGithubHeatmap(repos = []) {
   const c = document.getElementById("ghHeatmap");
   if (!c) return;
   c.innerHTML = "";
+  const updates = new Map();
+  repos.forEach((repo) => {
+    if (!repo.updated_at) return;
+    const date = new Date(repo.updated_at).toISOString().slice(0, 10);
+    updates.set(date, (updates.get(date) || 0) + 1);
+  });
   for (let i = 0; i < 364; i++) {
-    const lvl = Math.random() < 0.35 ? 0 : Math.floor(Math.random() * 4) + 1;
+    const dt = new Date();
+    dt.setHours(0, 0, 0, 0);
+    dt.setDate(dt.getDate() - (363 - i));
+    const date = dt.toISOString().slice(0, 10);
+    const updateCount = updates.get(date) || 0;
+    const lvl = Math.min(updateCount, 4);
     const cell = document.createElement("div");
     cell.className = `hm-cell hm-${lvl}`;
-    const dt = new Date();
-    dt.setDate(dt.getDate() - (363 - i));
-    cell.title = `${dt.toDateString()}: ${lvl === 0 ? "No" : lvl * 3} contributions`;
+    cell.title = `${dt.toDateString()}: ${updateCount} repository update${updateCount === 1 ? "" : "s"}`;
     c.appendChild(cell);
   }
 }

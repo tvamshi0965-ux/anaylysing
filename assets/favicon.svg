@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="EDU TECH">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#6e5ce7"/>
+      <stop offset="1" stop-color="#00b4d8"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="url(#bg)"/>
+  <path d="M10 27 32 16l22 11-22 11L10 27Z" fill="#fff"/>
+  <path d="M18 34v8c8 7 20 7 28 0v-8l-14 7-14-7Z" fill="#fff" opacity=".9"/>
+  <path d="M54 28v14" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="54" cy="45" r="3" fill="#fff"/>
+</svg>
