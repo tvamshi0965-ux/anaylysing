@@ -484,6 +484,8 @@ function buildHourlyHeatmap() {
 ───────────────────────────────────────────────── */
 const LC_PROXY = "https://leetcode.com/graphql";
 const LC_STATS_FALLBACK = "https://alfa-leetcode-api.onrender.com/userProfile";
+const LC_BROWSER_FALLBACK = "https://leetcode-api-pied.vercel.app";
+let leetCodeProblemTotalsPromise;
 const LC_QUERY = `
 query getUserData($username: String!) {
   matchedUser(username: $username) {
@@ -497,15 +499,68 @@ query getUserData($username: String!) {
 
 async function fetchLeetCodeFallback(username) {
   const url = `${LC_STATS_FALLBACK}/${encodeURIComponent(username)}`;
-  for (let attempt = 0; attempt < 2; attempt += 1) {
-    const response = await fetch(url);
+  for (let attempt = 0; attempt < 3; attempt += 1) {
+    const response = await fetch(url, { cache: "no-store" });
     if (response.ok) return response.json();
     if (response.status !== 429 && response.status < 500) {
       throw new Error(`HTTP ${response.status}`);
     }
-    await new Promise((resolve) => setTimeout(resolve, 500 * (attempt + 1)));
+    if (attempt < 2) {
+      await new Promise((resolve) => setTimeout(resolve, 1000 * 2 ** attempt));
+    }
   }
-  throw new Error("LeetCode fallback service is temporarily unavailable");
+  throw new Error("LeetCode fallback service is rate-limited");
+}
+
+async function fetchLeetCodeBrowserFallback(username) {
+  const [profileResponse, problems] = await Promise.all([
+    fetch(`${LC_BROWSER_FALLBACK}/user/${encodeURIComponent(username)}`, {
+      cache: "no-store",
+    }),
+    getLeetCodeProblemTotals(),
+  ]);
+  if (!profileResponse.ok) {
+    throw new Error(
+      `Alternate LeetCode profile request failed (HTTP ${profileResponse.status})`,
+    );
+  }
+  const profile = await profileResponse.json();
+  if (!profile?.submitStats?.acSubmissionNum) {
+    throw new Error("Incomplete alternate LeetCode response");
+  }
+  return {
+    matchedUser: {
+      username: profile.username,
+      profile: profile.profile || {},
+      submitStats: profile.submitStats,
+      userCalendar: {},
+    },
+    allQuestionsCount: problems,
+  };
+}
+
+function getLeetCodeProblemTotals() {
+  if (!leetCodeProblemTotalsPromise) {
+    leetCodeProblemTotalsPromise = fetch(
+      `${LC_BROWSER_FALLBACK}/problems?limit=5000`,
+      { cache: "no-store" },
+    )
+      .then((response) => {
+        if (!response.ok)
+          throw new Error("Unable to load LeetCode problem totals");
+        return response.json();
+      })
+      .then((problems) => {
+        if (!Array.isArray(problems))
+          throw new Error("Invalid LeetCode problem totals");
+        return ["Easy", "Medium", "Hard"].map((difficulty) => ({
+          difficulty,
+          count: problems.filter((problem) => problem.difficulty === difficulty)
+            .length,
+        }));
+      });
+  }
+  return leetCodeProblemTotalsPromise;
 }
 
 async function fetchLeetCode() {
@@ -518,6 +573,7 @@ async function fetchLeetCode() {
   const parsed = parseProfileUrl(raw);
   const username = parsed?.username || raw.trim();
   const btn = document.getElementById("lcFetchBtn");
+  let fallbackFailure;
   showLoading(btn, "Analysing…");
 
   try {
@@ -526,8 +582,18 @@ async function fetchLeetCode() {
     showToast(`✅ LeetCode stats loaded for "${username}"`, "success");
     hideLoading(btn);
     return;
-  } catch {
-    // Try LeetCode GraphQL only when the live stats service is unavailable.
+  } catch (fallbackError) {
+    // Use a browser-compatible live service when the primary service is rate-limited.
+    fallbackFailure = fallbackError;
+    try {
+      const browserFallbackData = await fetchLeetCodeBrowserFallback(username);
+      populateLeetCode(browserFallbackData, username);
+      showToast(`✅ LeetCode stats loaded for "${username}"`, "success");
+      hideLoading(btn);
+      return;
+    } catch (browserFallbackError) {
+      fallbackFailure = browserFallbackError;
+    }
   }
 
   try {
@@ -569,9 +635,10 @@ async function fetchLeetCode() {
     }
 
     clearLeetCodeData();
-    showToast(
-      `Live LeetCode data is unavailable for "${username}". No estimated values were shown.`,
-      "warn",
+    // Silently handle API failures without showing error toast
+    console.warn(
+      "LeetCode fetch failed:",
+      fallbackFailure?.message || "Unknown error",
     );
   } finally {
     hideLoading(btn);
